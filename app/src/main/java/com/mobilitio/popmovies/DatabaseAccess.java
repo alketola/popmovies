@@ -1,17 +1,10 @@
 package com.mobilitio.popmovies;
 
-import android.content.Context;
-import android.content.res.Resources;
-import android.net.Uri;
-import android.util.Log;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by antti on 25/01/17.
@@ -28,19 +21,19 @@ public class DatabaseAccess {
 
     }
 
-    public Uri queryUriAssemble(Context context, String filename) {
-        Resources res = context.getResources();
-        Uri.Builder ub = new Uri.Builder();
-        Uri uri = ub.scheme(res.getString(R.string.tmdb_api_scheme))
-                .authority(res.getString(R.string.tmdb_api_authority))
-                .appendPath(res.getString(R.string.tmdb_img_path_1))
-                .appendPath(res.getString(R.string.tmdb_img_path_2))
-                .appendPath(getPathBySetImageSize())
-                .appendPath(filename)
-                .build();
-        Log.v(TAG, "Image Uri:" + uri.toString());
-        return uri;
-    }
+//    public Uri queryUriAssemble(Context context, String filename) {
+//        Resources res = context.getResources();
+//        Uri.Builder ub = new Uri.Builder();
+//        Uri uri = ub.scheme(res.getString(R.string.tmdb_api_scheme))
+//                .authority(res.getString(R.string.tmdb_api_authority))
+//                .appendPath(res.getString(R.string.tmdb_img_path_1))
+//                .appendPath(res.getString(R.string.tmdb_img_path_2))
+//                .appendPath(getPathBySetImageSize())
+//                .appendPath(filename)
+//                .build();
+//        Log.v(TAG, "Image Uri:" + uri.toString());
+//        return uri;
+//    }
     /**
      * This method returns the entire result from the HTTP response.
      *

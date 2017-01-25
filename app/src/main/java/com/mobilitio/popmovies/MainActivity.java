@@ -68,5 +68,6 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         Log.v(TAG,"Intenting DetailActivity with uristring="+uristring);
         startActivity(intent);
     }
+    
 
 }
