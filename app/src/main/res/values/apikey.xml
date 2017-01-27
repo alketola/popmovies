@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-  <string name="themoviedb_api_key_v3">
-      you need to get the api key for API v3 from themoviedb.com</string>
-  <string name="themoviedb_api_key_v4">
-      you need to get the api key for API v4 from themoviedb.com </string>
-</resources>

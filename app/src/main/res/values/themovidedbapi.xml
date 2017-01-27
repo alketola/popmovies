@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tmdb_api_scheme">https</string>
+    <string name="tmdb_api_authority">api.themoviedb.org</string>
+    <string name="tmdb_api_v3">3</string>
+    <string name="tmdb_api_query">api_key</string>
+    <string name="tmdb_api_movie">movie</string>
+    <string name="tmdb_api_top">top_rated</string>
+    <string name="tmdb_api_popular">popular</string>
+    <string name="tmdb__v3_top_rated_path">/3/movie/top_rated?api_key=</string>
+    <string name="tmdb_img_scheme">http</string>
+    <string name="tmdb_img_authority">image.tmdb.org</string>
+    <string name="tmdb_img_path_1">t</string>
+    <string name="tmdb_img_path_2">p</string>
+    <string name="tmdb_img_size_smallest">w92</string>
+    <string name="tmdb_img_size_small">w154</string>
+    <string name="tmdb_img_size_default">w185</string>
+    <string name="tmdb_img_size_largest">w342</string>
+</resources><!-- TODO REMOVE API KEYS BEFORE COMMIT -->

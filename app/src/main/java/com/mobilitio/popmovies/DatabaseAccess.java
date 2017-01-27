@@ -1,16 +1,25 @@
 package com.mobilitio.popmovies;
 
+import android.content.Context;
+import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
 
+
 /**
  * Created by antti on 25/01/17.
  */
 
 public class DatabaseAccess {
+    private static final String TAG = PosterAdapter.class.getSimpleName();
 
     public DatabaseAccess (){
 
@@ -58,5 +67,88 @@ public class DatabaseAccess {
         } finally {
             urlConnection.disconnect();
         }
+    }
+
+    public static JSONArray extractJSONArray(Context context, String jason) {
+
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = new JSONObject(jason);
+        } catch (JSONException e) {
+            Log.w(TAG, "Jason had eaten something bad: " + jason);
+            e.printStackTrace();
+        }
+
+        final String STATUS_CODE = "status_code";
+        final String STATUS_MESSAGE = "status_message";
+        final String RESULTS = "results";
+        int error_code = 0;
+        String error_message = null;
+
+        /* Is there an error? */
+        if (jsonObject.has(STATUS_CODE)) {
+            try {
+                int errorCode = jsonObject.getInt(STATUS_CODE);
+            } catch (JSONException e) {
+                error_code = 0;
+            }
+            try {
+                error_message = jsonObject.getString(STATUS_MESSAGE);
+            } catch (JSONException e) {
+                error_message = "";
+            }
+            Log.w(TAG, "Error in TMDB HTTP communication: Message=" + error_message + " code=" + error_code);
+            return null;
+
+        }
+        JSONArray jsonResult = null;
+        if (jsonObject.has(RESULTS)) {
+            try {
+                jsonResult = (JSONArray) jsonObject.get(RESULTS);
+            } catch (JSONException e) {
+                Log.w(TAG, "TMDB response has result without result? json=" + jsonObject.toString());
+            }
+        }
+        if (jsonResult != null) {
+            //Log.d(TAG, "jsonResult=" + (jsonResult.toString()));
+        } else {
+            Log.e(TAG, "jsonResult is null.");
+        }
+        return jsonResult;
+
+    }
+
+    public static String extractPosterName(int position, JSONArray array) {
+        JSONObject oneMovieData = extractOneMovieData(position, array);
+        String postername = new String();
+        try {
+            if (oneMovieData != null) {
+                postername = oneMovieData.getString("poster_path");
+            }
+        } catch (JSONException e) {
+            Log.d(TAG, "extractPosterName: could not get string from object, or something.");
+            Log.d(TAG, "position:" + position);
+            Log.d(TAG, "array=" + array);
+            Log.d(TAG, "oneMovieData=" + oneMovieData);
+
+            e.printStackTrace();
+        }
+        postername = postername.substring(1);
+        return postername;
+    }
+
+    public static JSONObject extractOneMovieData(int position, JSONArray array) {
+        JSONObject oneMovieData = null;
+
+        try {
+            oneMovieData = (JSONObject) array.get(position);
+        } catch (JSONException e) {
+            Log.d(TAG, "extractOneMovieData: could not get object");
+            Log.d(TAG, "array=" + array);
+            Log.d(TAG, "oneMovieData=" + oneMovieData);
+
+            e.printStackTrace();
+        }
+        return oneMovieData;
     }
 }
