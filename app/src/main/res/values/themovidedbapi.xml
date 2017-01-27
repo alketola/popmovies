@@ -16,4 +16,20 @@
     <string name="tmdb_img_size_small">w154</string>
     <string name="tmdb_img_size_default">w185</string>
     <string name="tmdb_img_size_largest">w342</string>
-</resources><!-- TODO REMOVE API KEYS BEFORE COMMIT -->
+    <!-- TMDB HTTP QUERY "results":{} FIELDS String by default, others marked -->
+    <string name="tmdb_res_original_language">original_language</string>
+    <string name="tmdb_res_genre_ids_int_array">genre_ids</string>
+    <string name="tmdb_res_backdrop">backdrop_path</string>
+    <string name="tmdb_res_overview">overview</string>
+    <string name="tmdb_res_video_boolean">video</string>
+    <string name="tmdb_res_popularity_decimal">popularity</string>
+    <string name="tmdb_res_vote_count_int">vote_count</string>
+    <string name="tmdb_res_vote_average_decimal">vote_average</string>
+    <string name="tmdb_res_release_date_string_yyyy_mm_dd">release_date</string>
+    <string name="tmdb_res_id_int">id</string>
+    <string name="tmdb_res_poster">poster_path</string>
+    <string name="tmdb_res_title">title</string>
+    <string name="tmdb_res_adult_boolean">adult</string>
+    <string name="tmdb_res_original_title">original_title</string>
+
+</resources>

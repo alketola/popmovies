@@ -14,6 +14,9 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import static com.mobilitio.popmovies.DatabaseAccess.extractOneMovieData;
+import static com.mobilitio.popmovies.Util.getImageSizePathString;
+
 /**
  * Created by antti on 24/01/17.
  */
@@ -48,7 +51,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
     }
 
     public interface PosterClickListener {
-        public void onPosterClick(int itemIndex, String imageUrl);
+        public void onPosterClick(int itemIndex, JSONObject jsonObject);
     }
 
 
@@ -77,24 +80,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
         return mHowManyMovies;
     }
 
-    private static String getImageSizePathString(int width) {
-        /* tmdb has a few supported image sizes */
-        int[] tmdbImageSizes = {92, 154, 185, 342, 500, 780}; // must be in ascending order
-        int greatestLessOrEqualSize = 0;
-        for (int s : tmdbImageSizes) {
-            if (width <= s) {
-                greatestLessOrEqualSize = s;
-                break;
-            }
-            greatestLessOrEqualSize = s;
-        }
 
-        String jstring = Integer.toString(greatestLessOrEqualSize);
-        String widthString = "w" + jstring;
-        //Log.v(TAG, "px=" + width + " sizestring=" + widthString);
-        return widthString;
-
-    }
 
     private static String getPathBySetImageSize() {
         return getImageSizePathString(mPosterWidthPx);
@@ -122,11 +108,14 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
             int adapterPosition = getAdapterPosition();
 
             String imagefile = new String();
-            imagefile = DatabaseAccess.extractPosterName(adapterPosition, mMovieData);
-            //DatabaseAccess.extractOneMovieData(); TODO the way to go later for all data
-            String imageurlstring = Util.buildImageUri(context, imagefile, getImageSizePathString(mPosterWidthPx))
-                    .toString();
-            mPosterOnclickListener.onPosterClick(adapterPosition, imageurlstring);
+
+            JSONObject dataToDetailActivity = extractOneMovieData(adapterPosition, mMovieData);
+            //String imageurlstring = Util.buildImageUri(context, imagefile, getImageSizePathString(mPosterWidthPx))
+            //        .toString();
+            //mPosterOnclickListener.onPosterClick(adapterPosition, imageurlstring); //TODO remove
+            String dataString;
+            dataString = dataToDetailActivity.toString();
+            mPosterOnclickListener.onPosterClick(adapterPosition, dataToDetailActivity);
         }
 
         public void bind(int position) {

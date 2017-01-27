@@ -21,28 +21,7 @@ import java.util.Scanner;
 public class DatabaseAccess {
     private static final String TAG = PosterAdapter.class.getSimpleName();
 
-    public DatabaseAccess (){
 
-    }
-
-    public void onCreate (){
-
-
-    }
-
-//    public Uri queryUriAssemble(Context context, String filename) {
-//        Resources res = context.getResources();
-//        Uri.Builder ub = new Uri.Builder();
-//        Uri uri = ub.scheme(res.getString(R.string.tmdb_api_scheme))
-//                .authority(res.getString(R.string.tmdb_api_authority))
-//                .appendPath(res.getString(R.string.tmdb_img_path_1))
-//                .appendPath(res.getString(R.string.tmdb_img_path_2))
-//                .appendPath(getPathBySetImageSize())
-//                .appendPath(filename)
-//                .build();
-//        Log.v(TAG, "Image Uri:" + uri.toString());
-//        return uri;
-//    }
     /**
      * This method returns the entire result from the HTTP response.
      *
@@ -50,6 +29,7 @@ public class DatabaseAccess {
      * @return The contents of the HTTP response.
      * @throws IOException Related to network and stream reading
      */
+
     public static String getResponseFromHttpUrl(URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         try {
@@ -68,6 +48,28 @@ public class DatabaseAccess {
             urlConnection.disconnect();
         }
     }
+
+    /**
+     * org.json is used for handling results
+     * <p>
+     * Example of the results:
+     * {
+     * "original_language": "en",
+     * "genre_ids": [12,16,35,10751],
+     * "backdrop_path": "/lubzBMQLLmG88CLQ4F3TxZr2Q7N.jpg",
+     * "overview": "The quiet life of a terrier named Max is upended when his owner takes in Duke, a stray whom Max instantly dislikes.",
+     * "video": false,
+     * "popularity": 308.180118,
+     * "vote_count": 1854,
+     * "vote_average": 5.8,
+     * "release_date": "2016-06-18",
+     * "id": 328111,
+     * "poster_path": "/WLQN5aiQG8wc9SeKwixW7pAR8K.jpg",
+     * "title": "The Secret Life of Pets",
+     * "adult": false,
+     * "original_title": "The Secret Life of Pets"
+     * }
+     */
 
     public static JSONArray extractJSONArray(Context context, String jason) {
 
@@ -121,20 +123,29 @@ public class DatabaseAccess {
     public static String extractPosterName(int position, JSONArray array) {
         JSONObject oneMovieData = extractOneMovieData(position, array);
         String postername = new String();
+        if (oneMovieData != null) {
+
+            postername = extractPosterName(oneMovieData);
+        }
+
+        return postername;
+    }
+
+    public static String extractPosterName(JSONObject jsonObject) {
+        String postername = new String();
         try {
-            if (oneMovieData != null) {
-                postername = oneMovieData.getString("poster_path");
+            if (jsonObject != null) {
+                postername = jsonObject.getString("poster_path");
             }
         } catch (JSONException e) {
             Log.d(TAG, "extractPosterName: could not get string from object, or something.");
-            Log.d(TAG, "position:" + position);
-            Log.d(TAG, "array=" + array);
-            Log.d(TAG, "oneMovieData=" + oneMovieData);
+            Log.d(TAG, "jsonObject=" + jsonObject);
 
             e.printStackTrace();
         }
         postername = postername.substring(1);
         return postername;
+
     }
 
     public static JSONObject extractOneMovieData(int position, JSONArray array) {
@@ -151,4 +162,53 @@ public class DatabaseAccess {
         }
         return oneMovieData;
     }
+
+    public static JSONObject oneMovieDataObjectFrom(String s) {
+        JSONObject returned_object = null;
+        try {
+            returned_object = new JSONObject(s);
+        } catch (JSONException e) {
+            Log.e(TAG, "could not create one movie data object from string");
+            e.printStackTrace();
+        }
+        return returned_object;
+    }
+
+    public static String extractStringField(String field_name, JSONObject jsonObject) {
+        String string = new String();
+        Log.d(TAG, "extractStringField field_name=" + field_name);
+        Log.d(TAG, "jsonObject:" + jsonObject.toString());
+        try {
+            string = jsonObject.getString(field_name);
+        } catch (JSONException e) {
+            Log.d(TAG, "could not extractStringField:" + field_name);
+            e.printStackTrace();
+        }
+        return string;
+    }
+
+    public static int extractIntField(String field_name, JSONObject jsonObject) {
+        int i = 0;
+        try {
+            i = jsonObject.getInt(field_name);
+        } catch (JSONException e) {
+            Log.d(TAG, "could not extractIntField:" + field_name);
+            e.printStackTrace();
+        }
+        return i;
+    }
+
+    public static float extractDecimalField(String field_name, JSONObject jsonObject) {
+        float f = 0.0f;
+        try {
+            double d = jsonObject.getDouble(field_name);
+            Log.d(TAG, "Field=" + field_name + " double=" + d);
+            f = (float) d;
+        } catch (JSONException e) {
+            Log.d(TAG, "could not extractDecimalField '" + field_name + "' to double");
+            e.printStackTrace();
+        }
+        return f;
+    }
+
 }

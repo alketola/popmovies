@@ -5,13 +5,12 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.util.Log;
 
-import static android.content.ContentValues.TAG;
-
 /**
  * Created by antti on 27/01/17.
  */
 
 public class Util {
+    private static final String TAG = PosterAdapter.class.getSimpleName();
 
     public static Uri buildImageUri(Context context, String filename, String sizePathString) {
         Resources mRes = context.getResources();
@@ -41,17 +40,22 @@ public class Util {
         return uri;
     }
 
+    public static String getImageSizePathString(int width) {
+        /* tmdb has a few supported image sizes */
+        int[] tmdbImageSizes = {92, 154, 185, 342, 500, 780}; // must be in ascending order
+        int greatestLessOrEqualSize = 0;
+        for (int s : tmdbImageSizes) {
+            if (width <= s) {
+                greatestLessOrEqualSize = s;
+                break;
+            }
+            greatestLessOrEqualSize = s;
+        }
 
-//    private static ArrayList<String> prepareMoviePosterImageArrayList(int initialSize) {
-//        ArrayList<String> a = new ArrayList<String>(initialSize);
-//        a.add("WLQN5aiQG8wc9SeKwixW7pAR8K.jpg");
-//        a.add("z4x0Bp48ar3Mda8KiPD1vwSY3D8.jpg");
-//        a.add("z09QAf8WbZncbitewNk6lKYMZsh.jpg");
-//        a.add("tIKFBxBZhSXpIITiiB5Ws8VGXjt.jpg");
-//        a.add("ylXCdC106IKiarftHkcacasaAcb.jpg");
-//        a.add("jjBgi2r5cRt36xF6iNUEhzscEcb.jpg");
-//        a.add("5gJkVIVU7FDp7AfRAbPSvvdbre2.jpg");
-//
-//        return a;
-//    }
+        String jstring = Integer.toString(greatestLessOrEqualSize);
+        String widthString = "w" + jstring;
+        //Log.v(TAG, "px=" + width + " sizestring=" + widthString);
+        return widthString;
+
+    }
 }

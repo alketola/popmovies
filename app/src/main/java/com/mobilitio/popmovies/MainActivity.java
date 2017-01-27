@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -83,13 +84,24 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
 
     }
     @Override
-    public void onPosterClick(int adapterPosition,String uristring)    {
+    public void onPosterClick(int adapterPosition, JSONObject dataToDetailActivity) {
         Class destActivity = DetailActivity.class;
         Intent intent = new Intent(this, destActivity);
-        intent.putExtra(getString(R.string.intent_x_imageuri),uristring);
-        Log.v(TAG,"Intenting DetailActivity with uristring="+uristring);
+        String string_to_pass_the_object_to_detail_activity = dataToDetailActivity.toString();
+        intent.putExtra(getString(R.string.intent_x_jsonobject), string_to_pass_the_object_to_detail_activity);
+        Log.d(TAG, "Intent to DetailActivity with JSONObject=" + dataToDetailActivity.toString().substring(0, 50));
         startActivity(intent);
     }
+
+
+//// Old only image data transfer
+//    public void onPosterClick(int adapterPosition,String uristring)    {
+//        Class destActivity = DetailActivity.class;
+//        Intent intent = new Intent(this, destActivity);
+//        intent.putExtra(getString(R.string.intent_x_imageuri),uristring);
+//        Log.d(TAG,"Intenting DetailActivity with uristring="+uristring);
+//        startActivity(intent);
+//    }
 
     public void loadMovieData() {
         new FetchMovieDataTask().execute(getString(R.string.tmdb_api_popular));

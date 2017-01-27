@@ -4,5 +4,6 @@
     <string name="mi_top_rated">Top rated</string>
     <string name="mi_settings">Settings</string>
     <string name="intent_x_imageuri">imageuri</string>
+    <string name="intent_x_jsonobject">jsonobject</string>
     <string name="loading_error">LOADING ERROR. Please check connections</string>
 </resources>
