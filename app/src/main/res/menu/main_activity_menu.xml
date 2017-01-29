@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-        <item android:title="@string/mi_most_popular"
-            android:id="@+id/mi_most_popular"
-            android:orderInCategory="1"/>
-        <item android:title="@string/mi_top_rated"
-            android:id="@+id/mi_top_rated"
-            android:orderInCategory="2"/>
-        <item android:orderInCategory="3"/>
-        <item android:title="@string/mi_settings"
-            android:id="@+id/mi_settings"
-            android:orderInCategory="4"/>
+    <item
+        android:id="@+id/mi_most_popular"
+        android:orderInCategory="1"
+        android:title="@string/mi_most_popular" />
+    <item
+        android:id="@+id/mi_top_rated"
+        android:orderInCategory="2"
+        android:title="@string/mi_top_rated" />
+    <!--<item
+        android:orderInCategory="3"
+        android:title="" />
+    <item
+        android:id="@+id/mi_settings"
+        android:orderInCategory="4"
+        android:title="@string/mi_settings" />
+        -->
 </menu>

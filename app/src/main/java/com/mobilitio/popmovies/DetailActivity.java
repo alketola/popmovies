@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +16,7 @@ import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
+import static android.app.PendingIntent.getActivity;
 import static com.mobilitio.popmovies.DatabaseAccess.extractDecimalField;
 import static com.mobilitio.popmovies.DatabaseAccess.extractPosterName;
 import static com.mobilitio.popmovies.DatabaseAccess.extractStringField;
@@ -34,8 +36,9 @@ public class DetailActivity  extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_details);
+        setContentView(R.layout.activity_details_1);
         Context context = getApplicationContext();
+
         mDetailIv = (ImageView) findViewById(R.id.iv_detail);
         Intent intentIn = getIntent();
 
@@ -51,11 +54,21 @@ public class DetailActivity  extends AppCompatActivity {
             imageUriString = extractPosterName(jsonObject);
             Log.d(TAG, "UriString from JSON:" + imageUriString);
         }
-        int imageWidth = 200; // TODO something obtained or calculated
 
-        TextView tv_movie_title = (TextView) findViewById(R.id.tv_movie_title);
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int screenHeight = displaymetrics.heightPixels;
+        int screenWidth = displaymetrics.widthPixels;
+        boolean landscape = (screenWidth>screenHeight);
+        int dpi = displaymetrics.densityDpi;
+
+        int imageWidth = (int) (screenWidth * ((landscape) ? 0.3 : 0.9));
+        if (screenHeight<=256) { imageWidth = getResources().getInteger(R.integer.tmdb_img_size_smallest_int);}
+
+//        TextView tv_movie_title = (TextView) findViewById(R.id.tv_movie_title);
         String movieTitle = extractStringField(getString(R.string.tmdb_res_title), jsonObject);
-        tv_movie_title.setText(movieTitle);
+//        tv_movie_title.setText(movieTitle);
+        setTitle(movieTitle);
 
         String sizePath = Util.getImageSizePathString(imageWidth);
         String imageuri = Util.buildImageUri(this, imageUriString, sizePath).toString();
@@ -71,15 +84,15 @@ public class DetailActivity  extends AppCompatActivity {
 
         float rating_float = extractDecimalField(getString(R.string.tmdb_res_vote_average_decimal), jsonObject);
         String rating_string = String.valueOf(rating_float);
-
-        RatingBar rb_rating = (RatingBar) findViewById(R.id.rb_ratingBar);
-        rb_rating.setMax(10);
-        rb_rating.setNumStars(10);
-        rb_rating.setStepSize(1.0f);
-        rb_rating.setRating(rating_float);
-
-        TextView tv_rating = (TextView) findViewById(R.id.tv_ratingDecimalNumber);
+        TextView tv_rating = (TextView) findViewById(R.id.tv_rating_decimal_number);
         tv_rating.setText(rating_string);
+
+        String release_date = extractStringField(
+                getString(R.string.tmdb_res_release_date_string_yyyy_mm_dd),
+                jsonObject);
+        TextView tv_release_date = (TextView) findViewById(R.id.tv_release_date);
+        tv_release_date.setText(release_date);
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

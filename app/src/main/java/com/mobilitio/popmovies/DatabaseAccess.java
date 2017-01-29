@@ -19,7 +19,7 @@ import java.util.Scanner;
  */
 
 public class DatabaseAccess {
-    private static final String TAG = PosterAdapter.class.getSimpleName();
+    private static final String TAG = DatabaseAccess.class.getSimpleName();
 
 
     /**

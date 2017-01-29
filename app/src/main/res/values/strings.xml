@@ -6,4 +6,12 @@
     <string name="intent_x_imageuri">imageuri</string>
     <string name="intent_x_jsonobject">jsonobject</string>
     <string name="loading_error">LOADING ERROR. Please check connections</string>
+    <string name="rating_title_default">Rating</string>
+    <string name="not_available">N/A</string>
+    <string name="synopsis_title_default">Synopsis</string>
+    <string name="overview_text_default">Lorem ipsum ad hoc. Alea iacta est. Honni soit qui mal y pense. Vivus lapsus morituruim area.</string>
+    <string name="auth_key_error">Authentication error. Please check your API key.</string>
+    <string name="release_date_title">Date</string>
+    <string name="main_title_top_rated">PopMovies - Top Rated</string>
+    <string name="main_title_most_popular">PopMovies - Most Popular</string>
 </resources>

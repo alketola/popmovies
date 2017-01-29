@@ -15,6 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import static com.mobilitio.popmovies.DatabaseAccess.extractOneMovieData;
+import static com.mobilitio.popmovies.Util.buildImageUri;
 import static com.mobilitio.popmovies.Util.getImageSizePathString;
 
 /**
@@ -38,10 +39,6 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
         mHowManyMovies = numberOfDisplayedMovies;
         mPosterWidthPx = posterWidth;
         mPosterOnclickListener = posterOnClickListener;
-//        if (mPosterImageNames == null) {// TODO REMOVE
-//            mPosterImageNames = new ArrayList<String>(numberOfDisplayedMovies);
-//        }
-
     }
 
     public void setMovieData(JSONArray movieData) {
@@ -71,7 +68,6 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
 
     @Override
     public void onBindViewHolder(PosterViewHolder holder, int position) {
-        Log.v(TAG, "bind:" + Integer.toString(position));
         holder.bind(position);
     }
 
@@ -119,21 +115,19 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
         }
 
         public void bind(int position) {
-            Log.v(TAG, "bind: position=" + position);
+            Log.d(TAG, "bind: position=" + position);
             Context context = pvContext;
-//            imageView.setImageResource(R.mipmap.ic_launcher);
+            // if an android is needed, do imageView.setImageResource(R.mipmap.ic_launcher);
             JSONObject movie = null;
             String imagefilename = null;
             if (mMovieData != null) {
                 imagefilename = DatabaseAccess.extractPosterName(position, mMovieData);
             } else {
-                Log.e(TAG, "mMovieData = null");
+                Log.d(TAG, "mMovieData = null");
             }
 
             if (imagefilename != null) {
-                Log.v(TAG, "imagefilename=" + imagefilename);
-                Uri uri = Util.buildImageUri(context, imagefilename, getImageSizePathString(mPosterWidthPx));
-                Log.v(TAG, "image uri=" + uri.toString());
+                Uri uri = buildImageUri(context, imagefilename, getImageSizePathString(mPosterWidthPx));
                 Picasso.with(pvContext)
                         .load(uri.toString())
                         .resize(mPosterWidthPx, mPosterWidthPx) // square

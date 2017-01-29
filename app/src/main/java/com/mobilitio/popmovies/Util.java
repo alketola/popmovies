@@ -10,7 +10,7 @@ import android.util.Log;
  */
 
 public class Util {
-    private static final String TAG = PosterAdapter.class.getSimpleName();
+    private static final String TAG = Util.class.getSimpleName();
 
     public static Uri buildImageUri(Context context, String filename, String sizePathString) {
         Resources mRes = context.getResources();
