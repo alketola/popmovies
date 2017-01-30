@@ -14,6 +14,7 @@
     <string name="tmdb_img_path_2">p</string>
     <string name="tmdb_img_size_smallest">w92</string>
     <integer name="tmdb_img_size_smallest_int">92</integer>
+    <dimen name="tmdb_img_size_smallest_dp_dimen">92dp</dimen>
     <string name="tmdb_img_size_small">w154</string>
     <string name="tmdb_img_size_default">w185</string>
     <string name="tmdb_img_size_largest">w342</string>
@@ -32,5 +33,4 @@
     <string name="tmdb_res_title">title</string>
     <string name="tmdb_res_adult_boolean">adult</string>
     <string name="tmdb_res_original_title">original_title</string>
-
 </resources>

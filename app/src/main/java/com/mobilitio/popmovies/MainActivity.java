@@ -65,8 +65,8 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         mMoviePosterGrid.setHasFixedSize(false);
 
         /* set up LayoutManager */
-        int hor_or_ver = GridLayoutManager.VERTICAL;          // TODO Better if dynamic
-        int spanCount = 4;  //width / 92 ;// TODO This must be calculated accordingly
+        int hor_or_ver = GridLayoutManager.VERTICAL;
+        int spanCount = 3;  //width / 92 ;// TODO Maybe should be calculated, 4 is OK too
         boolean reverseLayout = false;
         mGridLayoutManager = new GridLayoutManager(this, spanCount);//, hor_or_ver, reverseLayout);
         mMoviePosterGrid.setLayoutManager(mGridLayoutManager);
@@ -140,6 +140,17 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         new FetchMovieDataTask().execute(mSearchMode);
     }
 
+    private void showMainPosters() {
+        mMoviePosterGrid.setVisibility(View.VISIBLE);
+        mErrorView.setVisibility(View.INVISIBLE);
+    }
+
+    private void showMainError() {
+        mMoviePosterGrid.setVisibility(View.INVISIBLE);
+        mErrorView.setVisibility(View.VISIBLE);
+
+    }
+
     public class FetchMovieDataTask extends AsyncTask<String, Void, JSONArray> {
 
         @Override
@@ -197,16 +208,5 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
                 showMainError();
             }
         }
-    }
-
-    private void showMainPosters() {
-        mMoviePosterGrid.setVisibility(View.VISIBLE);
-        mErrorView.setVisibility(View.INVISIBLE);
-    }
-
-    private void showMainError() {
-        mMoviePosterGrid.setVisibility(View.INVISIBLE);
-        mErrorView.setVisibility(View.VISIBLE);
-
     }
 }

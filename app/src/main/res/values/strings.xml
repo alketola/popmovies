@@ -5,7 +5,7 @@
     <string name="mi_settings">Settings</string>
     <string name="intent_x_imageuri">imageuri</string>
     <string name="intent_x_jsonobject">jsonobject</string>
-    <string name="loading_error">LOADING ERROR. Please check connections</string>
+    <string name="loading_error">LOADING ERROR. Please check connections and API KEY.</string>
     <string name="rating_title_default">Rating</string>
     <string name="not_available">N/A</string>
     <string name="synopsis_title_default">Synopsis</string>
@@ -14,4 +14,5 @@
     <string name="release_date_title">Date</string>
     <string name="main_title_top_rated">PopMovies - Top Rated</string>
     <string name="main_title_most_popular">PopMovies - Most Popular</string>
+    <string name="not_rated">Not rated</string>
 </resources>

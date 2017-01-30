@@ -9,4 +9,11 @@
     <dimen name="main_h1_size">22sp</dimen>
     <dimen name="margin_a">8dp</dimen>
     <dimen name="margin_minimal">3dp</dimen>
+    <dimen name="pb_tmdb_loading_height">30dp</dimen>
+    <dimen name="sv_main_top_padding">0dp</dimen>
+    <dimen name="zero_sp_padding">0sp</dimen>
+    <dimen name="iv_poster_margin">0sp</dimen>
+    <dimen name="tv_detail_value_width">120dp</dimen>
+    <dimen name="tv_detail_title_width">70dp</dimen>
+    <dimen name="tv_detail_height">29dp</dimen>
 </resources>

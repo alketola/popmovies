@@ -25,12 +25,11 @@ import static com.mobilitio.popmovies.Util.getImageSizePathString;
 public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterViewHolder> {
     //
     private static final String TAG = PosterAdapter.class.getSimpleName();
+    private static int mPosterWidthPx;
+    final private PosterClickListener mPosterOnclickListener;
     private int mHowManyMovies;
     //    private ArrayList<String> mPosterImageNames; TODO REMOVE
     private JSONArray mMovieData;
-    private static int mPosterWidthPx;
-
-    final private PosterClickListener mPosterOnclickListener;
 
 
     public PosterAdapter(int numberOfDisplayedMovies,
@@ -41,16 +40,15 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
         mPosterOnclickListener = posterOnClickListener;
     }
 
+    private static String getPathBySetImageSize() {
+        return getImageSizePathString(mPosterWidthPx);
+    }
+
     public void setMovieData(JSONArray movieData) {
         mMovieData = movieData;
         notifyDataSetChanged();
         Log.d(TAG, "setMovieData: mMovieData=" + mMovieData.toString().substring(0, 100));
     }
-
-    public interface PosterClickListener {
-        public void onPosterClick(int itemIndex, JSONObject jsonObject);
-    }
-
 
     @Override
     public PosterViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
@@ -77,9 +75,8 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
     }
 
 
-
-    private static String getPathBySetImageSize() {
-        return getImageSizePathString(mPosterWidthPx);
+    public interface PosterClickListener {
+        public void onPosterClick(int itemIndex, JSONObject jsonObject);
     }
 
     /****
@@ -130,6 +127,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
                 Uri uri = buildImageUri(context, imagefilename, getImageSizePathString(mPosterWidthPx));
                 Picasso.with(pvContext)
                         .load(uri.toString())
+                        .placeholder(R.mipmap.ic_launcher)
                         .resize(mPosterWidthPx, mPosterWidthPx) // square
                         .into(imageView);
             } else {
