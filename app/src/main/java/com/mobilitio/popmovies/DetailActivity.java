@@ -24,13 +24,11 @@ import static com.mobilitio.popmovies.DatabaseAccess.oneMovieDataObjectFrom;
  * Created by antti on 26/01/17.
  */
 
-public class DetailActivity  extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity {
     private static final String TAG = DetailActivity.class.getSimpleName();
 
     ImageView mDetailIv;
-    public DetailActivity() {
 
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,44 +42,45 @@ public class DetailActivity  extends AppCompatActivity {
         String imageUriString = new String();
         if (intentIn.hasExtra(getString(R.string.intent_x_imageuri))) {
             imageUriString = intentIn.getStringExtra(getString(R.string.intent_x_imageuri));
-            Log.d(TAG, "received intent with imageuri=" + imageUriString + "- not supported any more");
+//            Log.d(TAG, "received intent with imageuri=" + imageUriString + "- not supported any more");
         } else if (intentIn.hasExtra(getString(R.string.intent_x_jsonobject))) {
-            Log.d(TAG, "received JSON intent");
+//            Log.d(TAG, "received JSON intent");
             String string = intentIn.getStringExtra(getString(R.string.intent_x_jsonobject));
             jsonObject = oneMovieDataObjectFrom(string);
             imageUriString = extractPosterName(jsonObject);
-            Log.d(TAG, "UriString from JSON:" + imageUriString);
+//            Log.d(TAG, "UriString from JSON:" + imageUriString);
         }
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int screenHeight = displaymetrics.heightPixels;
         int screenWidth = displaymetrics.widthPixels;
-        Log.d(TAG, "screenHeight:" + screenHeight + " screenWidth:" + screenWidth);
-        boolean landscape = (screenWidth>screenHeight);
+        boolean landscape = (screenWidth > screenHeight);
+        Log.i(TAG, "screenHeight:" + screenHeight + " screenWidth:" + screenWidth + " landscape:" + landscape);
+        int smaller_dim = landscape ? screenHeight : screenWidth;
         int dpi = displaymetrics.densityDpi;
 
         // These constants are hand-tuned
         // assuming square image
         final float IMAGE_SIZE_FRACTION_LANDSCAPE = 0.5f;
-        final float IMAGE_SIZE_FRACTION_PORTRAIT = 0.95f;
-        final int SMALL_SCREEN_HEIGHT = 240;
+        final float IMAGE_SIZE_FRACTION_PORTRAIT = 0.9f;
+        final int SMALL_SCREEN_DIM = 240;
         // assuming square image
         int imageSize;
-        if (landscape) {
+
+        if (smaller_dim < SMALL_SCREEN_DIM) {
+            imageSize = getResources().getInteger(R.integer.tmdb_img_size_smallest_int);
+        } else if (landscape) {
             imageSize = (int) (screenHeight * IMAGE_SIZE_FRACTION_LANDSCAPE);
         } else {
             imageSize = (int) (screenWidth * IMAGE_SIZE_FRACTION_PORTRAIT);
         }
 
-        if (screenHeight < SMALL_SCREEN_HEIGHT) {
-            imageSize = getResources().getInteger(R.integer.tmdb_img_size_smallest_int);
-        }
-
-//        TextView tv_movie_title = (TextView) findViewById(R.id.tv_movie_title);
         String movieTitle = extractStringField(getString(R.string.tmdb_res_title), jsonObject);
-//        tv_movie_title.setText(movieTitle);
-        setTitle(movieTitle);
+
+        TextView tv_movie_title = (TextView) findViewById(R.id.tv_movie_title);
+        tv_movie_title.setText(movieTitle);
+//        setTitle(movieTitle); I would prefer putting movie title to app title
 
         String sizePath = Util.getImageSizePathString(imageSize);
         String imageuri = Util.buildImageUri(this, imageUriString, sizePath).toString();
@@ -108,6 +107,7 @@ public class DetailActivity  extends AppCompatActivity {
         tv_release_date.setText(release_date);
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return super.onCreateOptionsMenu(menu);

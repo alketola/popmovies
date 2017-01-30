@@ -3,7 +3,6 @@ package com.mobilitio.popmovies;
 import android.content.Context;
 import android.content.res.Resources;
 import android.net.Uri;
-import android.util.Log;
 
 /**
  * Created by antti on 27/01/17.
@@ -22,7 +21,7 @@ public class Util {
                 .appendPath(sizePathString) // e.g. 'w185'
                 .appendPath(filename)
                 .build();
-        Log.v(TAG, "Image Uri:" + uri.toString());
+//        Log.v(TAG, "Image Uri:" + uri.toString());
         return uri;
     }
 
@@ -36,7 +35,7 @@ public class Util {
                 .appendPath(searchCriteriaR)
                 .appendQueryParameter("api_key", api_key)
                 .build();
-        Log.v(TAG, "Movie List Uri:" + uri.toString());
+//        Log.v(TAG, "Movie List Uri:" + uri.toString());
         return uri;
     }
 
@@ -54,7 +53,7 @@ public class Util {
 
         String jstring = Integer.toString(greatestLessOrEqualSize);
         String widthString = "w" + jstring;
-        //Log.v(TAG, "px=" + width + " sizestring=" + widthString);
+//        Log.v(TAG, "px=" + width + " sizestring=" + widthString);
         return widthString;
 
     }

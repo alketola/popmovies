@@ -176,8 +176,8 @@ public class DatabaseAccess {
 
     public static String extractStringField(String field_name, JSONObject jsonObject) {
         String string = new String();
-        Log.d(TAG, "extractStringField field_name=" + field_name);
-        Log.d(TAG, "jsonObject:" + jsonObject.toString());
+//        Log.d(TAG, "extractStringField field_name=" + field_name);
+//        Log.d(TAG, "jsonObject:" + jsonObject.toString());
         try {
             string = jsonObject.getString(field_name);
         } catch (JSONException e) {
@@ -202,7 +202,7 @@ public class DatabaseAccess {
         float f = 0.0f;
         try {
             double d = jsonObject.getDouble(field_name);
-            Log.d(TAG, "Field=" + field_name + " double=" + d);
+//            Log.d(TAG, "Field=" + field_name + " double=" + d);
             f = (float) d;
         } catch (JSONException e) {
             Log.d(TAG, "could not extractDecimalField '" + field_name + "' to double");
