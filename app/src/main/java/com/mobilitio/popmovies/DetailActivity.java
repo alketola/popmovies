@@ -9,14 +9,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
-import static android.app.PendingIntent.getActivity;
 import static com.mobilitio.popmovies.DatabaseAccess.extractDecimalField;
 import static com.mobilitio.popmovies.DatabaseAccess.extractPosterName;
 import static com.mobilitio.popmovies.DatabaseAccess.extractStringField;
@@ -59,22 +57,38 @@ public class DetailActivity  extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int screenHeight = displaymetrics.heightPixels;
         int screenWidth = displaymetrics.widthPixels;
+        Log.d(TAG, "screenHeight:" + screenHeight + " screenWidth:" + screenWidth);
         boolean landscape = (screenWidth>screenHeight);
         int dpi = displaymetrics.densityDpi;
 
-        int imageWidth = (int) (screenWidth * ((landscape) ? 0.3 : 0.9));
-        if (screenHeight<=256) { imageWidth = getResources().getInteger(R.integer.tmdb_img_size_smallest_int);}
+        // These constants are hand-tuned
+        // assuming square image
+        final float IMAGE_SIZE_FRACTION_LANDSCAPE = 0.5f;
+        final float IMAGE_SIZE_FRACTION_PORTRAIT = 0.95f;
+        final int SMALL_SCREEN_HEIGHT = 240;
+        // assuming square image
+        int imageSize;
+        if (landscape) {
+            imageSize = (int) (screenHeight * IMAGE_SIZE_FRACTION_LANDSCAPE);
+        } else {
+            imageSize = (int) (screenWidth * IMAGE_SIZE_FRACTION_PORTRAIT);
+        }
+
+        if (screenHeight < SMALL_SCREEN_HEIGHT) {
+            imageSize = getResources().getInteger(R.integer.tmdb_img_size_smallest_int);
+        }
 
 //        TextView tv_movie_title = (TextView) findViewById(R.id.tv_movie_title);
         String movieTitle = extractStringField(getString(R.string.tmdb_res_title), jsonObject);
 //        tv_movie_title.setText(movieTitle);
         setTitle(movieTitle);
 
-        String sizePath = Util.getImageSizePathString(imageWidth);
+        String sizePath = Util.getImageSizePathString(imageSize);
         String imageuri = Util.buildImageUri(this, imageUriString, sizePath).toString();
         Picasso.with(context)
                 .load(imageuri)
-                .resize(imageWidth, imageWidth) // square
+                .placeholder(R.mipmap.ic_launcher)
+                .resize(imageSize, imageSize) // square
                 .into(mDetailIv);
 
         TextView tv_synopsis = (TextView) findViewById(R.id.tv_synopsis);

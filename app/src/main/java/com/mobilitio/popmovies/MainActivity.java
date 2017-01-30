@@ -24,6 +24,12 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/****************************************************
+ * This is the MainActivity of PopMovies
+ * Copyright 2017, Antti Ketola
+ * <p>
+ * MIT Licence
+ */
 public class MainActivity extends AppCompatActivity implements PosterAdapter.PosterClickListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -36,8 +42,9 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
     private GridLayoutManager mGridLayoutManager;
 
     private RecyclerView mMoviePosterGrid;
+    // TODO INSERT API KEY TO THE STRING INITIALIZER BELOW
     private String mApiKey = "";
-    // TODO Make API KEY EMPTY BEFORE COMMIT
+    // TODO CLEAR API KEY EMPTY BEFORE COMMIT
     private JSONArray mMovieData;
 
     @Override
