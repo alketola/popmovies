@@ -14,9 +14,9 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import static com.mobilitio.popmovies.DatabaseAccess.extractOneMovieData;
-import static com.mobilitio.popmovies.Util.buildImageUri;
-import static com.mobilitio.popmovies.Util.getImageSizePathString;
+import static com.mobilitio.popmovies.TmdbDigger.extractOneMovieData;
+import static com.mobilitio.popmovies.TmdbUriUtil.buildImageUri;
+import static com.mobilitio.popmovies.TmdbUriUtil.getImageSizePathString;
 
 /**
  * Created by antti on 24/01/17.
@@ -66,6 +66,9 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
 
     @Override
     public void onBindViewHolder(PosterViewHolder holder, int position) {
+        if ((position >= getItemCount() - 1)) {
+            Log.v(TAG, "Bind in the end, position:" + position);
+        }
         holder.bind(position);
     }
 
@@ -103,7 +106,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
             String imagefile = new String();
 
             JSONObject dataToDetailActivity = extractOneMovieData(adapterPosition, mMovieData);
-            //String imageurlstring = Util.buildImageUri(context, imagefile, getImageSizePathString(mPosterWidthPx))
+            //String imageurlstring = TmdbUriUtil.buildImageUri(context, imagefile, getImageSizePathString(mPosterWidthPx))
             //        .toString();
             //mPosterOnclickListener.onPosterClick(adapterPosition, imageurlstring); //TODO remove
             String dataString;
@@ -118,7 +121,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
             JSONObject movie = null;
             String imagefilename = null;
             if (mMovieData != null) {
-                imagefilename = DatabaseAccess.extractPosterName(position, mMovieData);
+                imagefilename = TmdbDigger.extractPosterName(position, mMovieData);
             } else {
                 Log.d(TAG, "mMovieData = null");
             }

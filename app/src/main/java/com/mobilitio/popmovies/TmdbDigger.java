@@ -15,11 +15,18 @@ import java.util.Scanner;
 
 
 /**
+ * Class for handling JSON results from TheMovieDB API
+ *
+ * Renamed "Database Access" as TmdbDigger, as it is actually doing digging
+ * And there is to be a local database to be confused with.
+ *
+ * A lot of JSON processing is done here, and it's TMDB related.
+ *
  * Created by antti on 25/01/17.
  */
 
-public class DatabaseAccess {
-    private static final String TAG = DatabaseAccess.class.getSimpleName();
+public class TmdbDigger {
+    private static final String TAG = TmdbDigger.class.getSimpleName();
 
 
     /**
@@ -81,9 +88,9 @@ public class DatabaseAccess {
             e.printStackTrace();
         }
 
-        final String STATUS_CODE = "status_code";
-        final String STATUS_MESSAGE = "status_message";
-        final String RESULTS = "results";
+        final String STATUS_CODE = context.getString(R.string.tmdb_res_out_status_code);
+        final String STATUS_MESSAGE = context.getString(R.string.tmdb_res_out_status_message);
+        final String RESULTS = context.getString(R.string.tmdb_res_out_results);
         int error_code = 0;
         String error_message = null;
 
@@ -91,26 +98,40 @@ public class DatabaseAccess {
         if (jsonObject.has(STATUS_CODE)) {
             try {
                 int errorCode = jsonObject.getInt(STATUS_CODE);
+                switch (error_code) {
+                    case 0:
+                    case 1:
+                        // Equals to OK! HTTP 200 see: https://www.themoviedb.org/documentation/api/status-codes?language=ch
+                        break;
+                    default: // some error code, say, any error
+                        Log.i(TAG, "Received response with error code:" + error_code);
+                        return null;
+                }
             } catch (JSONException e) {
-                error_code = 0;
+                Log.d(TAG, "Strange, received response with error code but no readable content, maybe! No errors, then?");
             }
+
             try {
                 error_message = jsonObject.getString(STATUS_MESSAGE);
             } catch (JSONException e) {
-                error_message = "";
+                error_message = "BAD STATUS MESSAGE";
+                Log.w(TAG, "Error in TMDB HTTP communication: Message=" + error_message + " code=" + error_code);
+                return null;
             }
-            Log.w(TAG, "Error in TMDB HTTP communication: Message=" + error_message + " code=" + error_code);
-            return null;
-
+        } else {
+            error_code = 0;
         }
+        // Ok, Here with no error codes
         JSONArray jsonResult = null;
         if (jsonObject.has(RESULTS)) {
             try {
                 jsonResult = (JSONArray) jsonObject.get(RESULTS);
             } catch (JSONException e) {
                 Log.w(TAG, "TMDB response has result without result? json=" + jsonObject.toString());
+                return null;
             }
         }
+        // Last debug
         if (jsonResult != null) {
             //Log.d(TAG, "jsonResult=" + (jsonResult.toString()));
         } else {
@@ -119,6 +140,36 @@ public class DatabaseAccess {
         return jsonResult;
 
     }
+
+    public static int getPageCount(Context context, JSONObject jsonObject, int defaultCount) {
+        int pageCount = defaultCount;
+        if (jsonObject.has(context.getString(R.string.tmdb_res_out_total_pages))) {
+            try {
+                pageCount = jsonObject.getInt(context.getString(R.string.tmdb_res_out_total_pages));
+            } catch (JSONException exception) {
+                Log.v(TAG, "No total_pages found in json:" + jsonObject.toString());
+            }
+        }
+        return pageCount;
+    }
+
+    /*
+     * @param defaultCount -the int that should be returned if the call fails, 0 or 1 to decide
+     *
+     */
+    public static int getResultCount(Context context, JSONObject jsonObject, int defaultCount) {
+        int resultCount = defaultCount;
+        if (jsonObject.has(context.getString(R.string.tmdb_res_out_total_results))) {
+            try {
+                resultCount = jsonObject.getInt(context.getString(R.string.tmdb_res_out_total_results));
+            } catch (JSONException exception) {
+                Log.v(TAG, "No total_results found in json:" + jsonObject.toString());
+            }
+        }
+        return resultCount;
+    }
+
+
 
     public static String extractPosterName(int position, JSONArray array) {
         JSONObject oneMovieData = extractOneMovieData(position, array);
@@ -211,4 +262,31 @@ public class DatabaseAccess {
         return f;
     }
 
+    public static int getArrayLength(JSONArray array) {
+        return array.length();
+    }
+
+    public static String extractVideoKey(Context context, JSONArray array, int index) {
+
+        JSONObject jsonObject = null;
+        String key = "";
+        try {
+            jsonObject = array.getJSONObject(index);
+        } catch (JSONException e) {
+            Log.w(TAG, "JARRAY had eaten something bad: " + array.toString());
+            e.printStackTrace();
+        }
+        try {
+            key = jsonObject.getString(context.getString(R.string.tmdb_res_video_key));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return key;
+    }
+
+    public static int extractMovieId(Context context, JSONObject jsonObject) {
+        int id = 0;
+        id = extractIntField(context.getString(R.string.tmdb_res_movie_id), jsonObject);
+        return id;
+    }
 }

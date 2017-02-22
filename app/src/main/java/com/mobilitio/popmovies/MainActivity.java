@@ -32,19 +32,16 @@ import java.net.URL;
  */
 public class MainActivity extends AppCompatActivity implements PosterAdapter.PosterClickListener {
     private static final String TAG = MainActivity.class.getSimpleName();
-
+    // TODO INSERT API KEY TO THE STRING INITIALIZER BELOW
+    public static String mApiKey = "";
     PosterAdapter mPosterAdapter;
     ProgressBar mLoadingIndicator;
     TextView mErrorView;
     DetailActivity detailActivity;
     String mSearchMode;
-
     private GridLayoutManager mGridLayoutManager;
-
     private RecyclerView mMoviePosterGrid;
-    // TODO INSERT API KEY TO THE STRING INITIALIZER BELOW
-    private String mApiKey = "";
-    // TODO CLEAR API KEY EMPTY BEFORE COMMIT
+    // TODO Make API KEY EMPTY BEFORE COMMIT
     private JSONArray mMovieData;
 
     @Override
@@ -143,8 +140,10 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         mSearchMode = getString(R.string.tmdb_api_popular);
         setTitle(getString(R.string.main_title_most_popular));
     }
+
     public void loadMovieData() {
-        new FetchMovieDataTask().execute(mSearchMode);
+        int page = 1;
+        new FetchMovieDataTask().execute(mSearchMode, Integer.toString(page));
     }
 
     private void showMainPosters() {
@@ -176,8 +175,19 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
             }
 
             String movieSearchMode = params[0];//Not pretty but works
-            Uri movieRequestUri = Util.buildMovieListUri(getApplicationContext(),
-                    movieSearchMode, mApiKey);
+            String pageString = "1";
+            int pageNr = 1;
+            if (params[1] != null) {
+                pageString = params[1];
+                try {
+                    pageNr = Integer.valueOf(pageString);
+                } catch (NumberFormatException e) {
+                    Log.w(TAG, "Something wrong with the task parameter[1]:" + params[1]);
+                }
+            }
+
+            Uri movieRequestUri = TmdbUriUtil.buildMovieListUri(getApplicationContext(),
+                    movieSearchMode, mApiKey, pageNr);
 
             try {
                 movieRequestURL = new URL(movieRequestUri.toString());
@@ -187,10 +197,10 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
             }
 
             try {
-                String jsonTMDBResponse = DatabaseAccess
+                String jsonTMDBResponse = TmdbDigger
                         .getResponseFromHttpUrl(movieRequestURL);
                 Log.v(TAG, "jsonTMDBResponse=" + jsonTMDBResponse.substring(0, 100));
-                tmdbData = DatabaseAccess
+                tmdbData = TmdbDigger
                         .extractJSONArray(MainActivity.this, jsonTMDBResponse);
             } catch (MalformedURLException mfue) {
                 Log.w(TAG, "MalformedURLException, url=" + movieRequestURL.toString());
