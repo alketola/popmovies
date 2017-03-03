@@ -15,4 +15,5 @@
     <string name="main_title_top_rated">PopMovies - Top Rated</string>
     <string name="main_title_most_popular">PopMovies - Most Popular</string>
     <string name="not_rated">Not rated</string>
+    <string name="favourite_title">Favourite</string>
 </resources>

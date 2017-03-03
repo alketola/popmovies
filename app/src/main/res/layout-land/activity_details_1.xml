@@ -59,7 +59,7 @@
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <TextView
@@ -91,7 +91,28 @@
                 android:textAlignment="gravity"
                 android:textSize="@dimen/detail_h2_size"
                 android:textStyle="normal" />
+        </LinearLayout>
 
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.AppCompatCheckBox
+                android:id="@+id/tv_favourite_title"
+                android:layout_width="@dimen/scoreboard_width"
+                android:layout_height="@dimen/tv_detail_height"
+                android:layout_marginEnd="@dimen/margin_a"
+                android:layout_marginLeft="@dimen/margin_a"
+                android:layout_marginRight="@dimen/margin_a"
+                android:layout_marginStart="@dimen/margin_a"
+                android:layout_marginTop="@dimen/margin_minimal"
+                android:gravity="center_horizontal"
+                android:text="@string/favourite_title"
+                android:textAlignment="gravity"
+                android:textColor="@color/colorFavouriteOff"
+                android:textSize="@dimen/detail_h2_size"
+                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
 
@@ -126,7 +147,6 @@
             android:text="@string/synopsis_title_default"
             android:textSize="@dimen/detail_h2_size"
             android:textStyle="bold" />
-
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

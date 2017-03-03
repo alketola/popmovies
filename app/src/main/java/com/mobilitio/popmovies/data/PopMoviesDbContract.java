@@ -11,6 +11,7 @@ public class PopMoviesDbContract {
     public static final String AUTHORITY = "com.mobilitio.popmovies";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
     public static final String MOVIE_PATH = "movie";
+    public static final String ALL_MOVIES_PATH = "allmovies";
     public static final String TRAILERS_PATH = "trailers";
 
     public static final class MovieEntry implements BaseColumns {
@@ -28,7 +29,7 @@ public class PopMoviesDbContract {
         public static final String COLUMN_VOTE_COUNT = "vote_count";//INT 1854,
         public static final String COLUMN_VOTE_AVERAGE = "vote_average"; // FLOAT: 5.8
         public static final String COLUMN_RELEASE_DATE = "release_date"; // DATE FORMAT "2016-06-18"
-        public static final String COLUMN_MOVIE_ID = "id"; // INT 328111, PRIMARY KEY
+        public static final String COLUMN_MOVIE_ID = "movie_id"; // INT 328111, PRIMARY KEY
         public static final String COLUMN_POSTER_PATH = "poster_path";
         public static final String COLUMN_TITLE = "title";
         public static final String COLUMN_ADULT = "adult"; // boolean: INT 0=false,

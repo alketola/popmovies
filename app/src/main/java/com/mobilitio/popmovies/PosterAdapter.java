@@ -137,6 +137,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
                 Log.e(TAG, "imagefilename = null");
             }
 
+
         }
 
     }

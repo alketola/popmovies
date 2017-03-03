@@ -17,6 +17,11 @@
         </activity>
         <activity android:name=".DetailActivity">
         </activity>
+
+        <provider
+            android:name="com.mobilitio.popmovies.data.PopMoviesProvider"
+            android:authorities="com.mobilitio.popmovies"
+            android:exported="false" />
     </application>
 
 </manifest>

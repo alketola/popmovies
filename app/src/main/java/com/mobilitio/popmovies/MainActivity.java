@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         setSearchModePopular();
 
         /* load movie data from tmdb */
-        loadMovieData();
+        loadMovieData(1);
         showMainPosters();
     }
 
@@ -106,12 +106,12 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
             case R.id.mi_most_popular:
                 Log.v(TAG, "Most Popular Search Mode Selected");
                 setSearchModePopular();
-                loadMovieData();
+                loadMovieData(1);
                 break;
             case R.id.mi_top_rated:
                 Log.v(TAG, "Top Rated Search Mode Selected");
                 setSearchModeTopRated();
-                loadMovieData();
+                loadMovieData(1);
                 break;
 //            case R.id.mi_settings:
 //                Log.v(TAG,"SETTINGS selected");
@@ -141,8 +141,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         setTitle(getString(R.string.main_title_most_popular));
     }
 
-    public void loadMovieData() {
-        int page = 1;
+    public void loadMovieData(int page) {
         new FetchMovieDataTask().execute(mSearchMode, Integer.toString(page));
     }
 
