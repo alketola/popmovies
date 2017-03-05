@@ -95,6 +95,13 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         showMainPosters();
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "onRestart()");
+        loadMovieData(1);
+    }
+
     /* Pump up the menu */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

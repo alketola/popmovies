@@ -166,6 +166,12 @@ public class DetailActivity extends AppCompatActivity {
         mReleaseDate = extractStringField(getString(R.string.tmdb_res_release_date_string_yyyy_mm_dd), jsonObject);
         TextView tv_release_date = (TextView) findViewById(R.id.tv_release_date);
         tv_release_date.setText(mReleaseDate);
+    } // end onCreate
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause");
     }
 
     private boolean movieIsInDB(int movieId) {
