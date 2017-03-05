@@ -46,6 +46,7 @@ public class PopMoviesProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] p1, String s1, String[] strings1, String s2) {
         Cursor returnedCursor = null;
         String[] columns = new String[]{
+                PopMoviesDbContract.MovieEntry.COLUMN_MOVIE_ID,
                 PopMoviesDbContract.MovieEntry.COLUMN_ORIGINAL_TITLE,
                 PopMoviesDbContract.MovieEntry.COLUMN_POSTER_PATH,
                 PopMoviesDbContract.MovieEntry.COLUMN_RELEASE_DATE,
@@ -74,7 +75,8 @@ public class PopMoviesProvider extends ContentProvider {
                         groupBy, having, orderBy);
                 break;
             case URI_SELECTOR_ALL_MOVIES: {
-                selection = " * ";
+                Log.d("POPMOVIESPROVIDE", "case URI_SELECTOR_ALL_MOVIES");
+                selection = null;
                 selectionArgs = null;
                 returnedCursor = mDbHelper.getReadableDatabase().query(
                         PopMoviesDbContract.MovieEntry.TABLE,

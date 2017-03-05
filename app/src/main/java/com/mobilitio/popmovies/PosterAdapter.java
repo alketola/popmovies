@@ -46,8 +46,9 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
 
     public void setMovieData(JSONArray movieData) {
         mMovieData = movieData;
+        mHowManyMovies = movieData.length();
         notifyDataSetChanged();
-        Log.d(TAG, "setMovieData: mMovieData=" + mMovieData.toString().substring(0, 100));
+        Log.d(TAG, "setMovieData: mMovieData=" + mMovieData.toString());//.substring(0, 100)ad
     }
 
     @Override

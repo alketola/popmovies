@@ -2,6 +2,7 @@
     <string name="app_name">PopMovies</string>
     <string name="mi_most_popular">Most popular</string>
     <string name="mi_top_rated">Top rated</string>
+    <string name="mi_favourites">Favourites</string>
     <string name="mi_settings">Settings</string>
     <string name="intent_x_imageuri">imageuri</string>
     <string name="intent_x_jsonobject">jsonobject</string>
@@ -16,4 +17,6 @@
     <string name="main_title_most_popular">PopMovies - Most Popular</string>
     <string name="not_rated">Not rated</string>
     <string name="favourite_title">Favourite</string>
+    <string name="search_my_favourites">search_mode_favourites</string>
+    <string name="search_my_favourites_title">PopMovies - My Favourites</string>
 </resources>

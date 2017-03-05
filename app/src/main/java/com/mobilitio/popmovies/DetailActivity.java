@@ -3,6 +3,7 @@ package com.mobilitio.popmovies;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -44,11 +45,11 @@ public class DetailActivity extends AppCompatActivity {
     String mSynopsisText;
     float mRatingFloat;
     String mReleaseDate;
-    boolean mFavoriteOn = false;
-
+    boolean mFavoriteOn;
+    String mShortImageUriString = new String();
 
     ImageView mDetailIv;
-    View favouriteButton;
+    AppCompatCheckBox favouriteButton;
     private View.OnClickListener mFavouriteOnClickListener;
 
 
@@ -62,17 +63,18 @@ public class DetailActivity extends AppCompatActivity {
         Intent intentIn = getIntent();
 
         JSONObject jsonObject = null;
-        String imageUriString = new String();
 
+        // Extract recived data
         if (intentIn.hasExtra(getString(R.string.intent_x_imageuri))) {
-            imageUriString = intentIn.getStringExtra(getString(R.string.intent_x_imageuri));
+            mShortImageUriString = intentIn.getStringExtra(getString(R.string.intent_x_imageuri));
 //            Log.d(TAG, "received intent with imageuri=" + imageUriString + "- not supported any more");
         } else if (intentIn.hasExtra(getString(R.string.intent_x_jsonobject))) {
 //            Log.d(TAG, "received JSON intent");
             String string = intentIn.getStringExtra(getString(R.string.intent_x_jsonobject));
             jsonObject = TmdbDigger.oneMovieDataObjectFrom(string);
-            imageUriString = TmdbDigger.extractPosterName(jsonObject);
+            mShortImageUriString = TmdbDigger.extractPosterName(jsonObject);
             mMovieId = TmdbDigger.extractMovieId(context, jsonObject);
+            mFavoriteOn = movieIsInDB(mMovieId);
 //            Log.d(TAG, "UriString from JSON:" + imageUriString);
         }
         // Measure display for semi-automatic layout tuning
@@ -103,14 +105,14 @@ public class DetailActivity extends AppCompatActivity {
 
         // Now, extract elements to UI, storing them to mOdule variables
         // and putting them to UI views
-        mMovieTitle = TmdbDigger.extractStringField(getString(R.string.tmdb_res_title), jsonObject);
+        mMovieTitle = TmdbDigger.extractStringField(getString(R.string.tmdb_res_original_title), jsonObject);
 
         TextView tv_movie_title = (TextView) findViewById(R.id.tv_movie_title);
         tv_movie_title.setText(mMovieTitle);
 //        setTitle(mMovieTitle); I would prefer putting movie title to app title
 
         String sizePath = TmdbUriUtil.getImageSizePathString(imageSize);
-        mImageURIString = TmdbUriUtil.buildImageUri(this, imageUriString, sizePath).toString();
+        mImageURIString = TmdbUriUtil.buildImageUri(this, mShortImageUriString, sizePath).toString();
         Picasso.with(context)
                 .load(mImageURIString)
                 .placeholder(R.mipmap.ic_launcher)
@@ -149,9 +151,9 @@ public class DetailActivity extends AppCompatActivity {
                 Log.d(TAG, "Clicked Favourite:" + mFavoriteOn);
             }
         };
-        favouriteButton = findViewById(R.id.tv_favourite_title);
+        favouriteButton = (AppCompatCheckBox) findViewById(R.id.tv_favourite_title);
         favouriteButton.setOnClickListener(mFavouriteOnClickListener);
-
+        favouriteButton.setChecked(movieIsInDB(mMovieId));
 
         FetchMovieVideosTask videoLister = new FetchMovieVideosTask();
         videoLister.execute(mMovieId);
@@ -161,17 +163,28 @@ public class DetailActivity extends AppCompatActivity {
         TextView tv_rating = (TextView) findViewById(R.id.tv_rating_decimal_number);
         tv_rating.setText(ratingString);
 
-        mReleaseDate = extractStringField(
-                getString(R.string.tmdb_res_release_date_string_yyyy_mm_dd),
-                jsonObject);
+        mReleaseDate = extractStringField(getString(R.string.tmdb_res_release_date_string_yyyy_mm_dd), jsonObject);
         TextView tv_release_date = (TextView) findViewById(R.id.tv_release_date);
         tv_release_date.setText(mReleaseDate);
+    }
+
+    private boolean movieIsInDB(int movieId) {
+        boolean exists = false;
+        String movieIdString = String.valueOf(mMovieId);
+        Uri qUri = Uri.parse(PopMoviesDbContract.MovieEntry.CONTENT_URI + "/" + mMovieId);
+        Cursor cursor = getContentResolver().query(qUri, null, null, null, null);
+        if (cursor.getCount() > 0) {
+            exists = true;
+        }
+
+        return exists;
     }
 
     private void addMovieToDb(Context context) {
         ContentValues movieDataCV = new ContentValues();
         movieDataCV.put(PopMoviesDbContract.MovieEntry.COLUMN_ORIGINAL_TITLE, mMovieTitle);
-        movieDataCV.put(PopMoviesDbContract.MovieEntry.COLUMN_POSTER_PATH, mImageURIString);
+        // PLAIN path not the complete URI mImageURIString, but it must be preceded by a slash
+        movieDataCV.put(PopMoviesDbContract.MovieEntry.COLUMN_POSTER_PATH, "/" + mShortImageUriString);
         movieDataCV.put(PopMoviesDbContract.MovieEntry.COLUMN_OVERVIEW, mSynopsisText);
         movieDataCV.put(PopMoviesDbContract.MovieEntry.COLUMN_VOTE_AVERAGE, mRatingFloat);
         movieDataCV.put(PopMoviesDbContract.MovieEntry.COLUMN_RELEASE_DATE, mReleaseDate);

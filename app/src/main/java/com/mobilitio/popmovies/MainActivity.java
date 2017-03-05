@@ -2,6 +2,8 @@ package com.mobilitio.popmovies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,7 +19,10 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.mobilitio.popmovies.data.PopMoviesDbContract;
+
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -34,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
     private static final String TAG = MainActivity.class.getSimpleName();
     // TODO INSERT API KEY TO THE STRING INITIALIZER BELOW
     public static String mApiKey = "";
+    // TODO REMOVE API KEY BEFORE COMMIT
     PosterAdapter mPosterAdapter;
     ProgressBar mLoadingIndicator;
     TextView mErrorView;
@@ -70,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
 
         /* set up LayoutManager */
         int hor_or_ver = GridLayoutManager.VERTICAL;
-        int spanCount = 3;  //width / 92 ;// TODO Maybe should be calculated, 4 is OK too
+        int spanCount = 2;  //width / 92 ;// TODO Maybe should be calculated, 4 is OK too
         boolean reverseLayout = false;
         mGridLayoutManager = new GridLayoutManager(this, spanCount);//, hor_or_ver, reverseLayout);
         mMoviePosterGrid.setLayoutManager(mGridLayoutManager);
@@ -113,6 +119,11 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
                 setSearchModeTopRated();
                 loadMovieData(1);
                 break;
+            case R.id.mi_favourites:
+                Log.v(TAG, "Favourites");
+                setSearchModeFavourites();
+                loadMovieData(1);
+                break;
 //            case R.id.mi_settings:
 //                Log.v(TAG,"SETTINGS selected");
 //                break;
@@ -139,6 +150,11 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
     private void setSearchModePopular() {
         mSearchMode = getString(R.string.tmdb_api_popular);
         setTitle(getString(R.string.main_title_most_popular));
+    }
+
+    private void setSearchModeFavourites() {
+        mSearchMode = getString(R.string.search_my_favourites);
+        setTitle(getString(R.string.search_my_favourites_title));
     }
 
     public void loadMovieData(int page) {
@@ -174,6 +190,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
             }
 
             String movieSearchMode = params[0];//Not pretty but works
+
             String pageString = "1";
             int pageNr = 1;
             if (params[1] != null) {
@@ -185,6 +202,27 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
                 }
             }
 
+            // Instead of any net query, query our own content provider
+            if (movieSearchMode.equals(getString(R.string.search_my_favourites))) {
+
+                Uri uri = PopMoviesDbContract.BASE_CONTENT_URI.buildUpon()
+                        .appendPath(PopMoviesDbContract.ALL_MOVIES_PATH).build();
+                Cursor favDbCursor = null;
+
+                try {
+                    favDbCursor = getContentResolver().query(uri, null, null, null, null);
+                } catch (Exception e) {
+
+                }
+                if (favDbCursor != null) {
+                    tmdbData = readTmdbDataFromFavDB(getApplicationContext(), favDbCursor);
+                }
+
+                return tmdbData; // To make things later easier a JSONArray must be returned
+
+            }
+
+            // Here we go with the 'ordinary' TMDB query
             Uri movieRequestUri = TmdbUriUtil.buildMovieListUri(getApplicationContext(),
                     movieSearchMode, mApiKey, pageNr);
 
@@ -224,5 +262,27 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
                 showMainError();
             }
         }
+    }
+
+    private static JSONArray readTmdbDataFromFavDB(Context context, Cursor favDbCursor) {
+        Resources r = context.getResources();
+        if (favDbCursor == null) {
+            return null; // What else?
+        }
+
+        JSONArray moviesArray = new JSONArray();
+
+        int favCount = favDbCursor.getCount();
+        if (favCount < 1) {
+            return moviesArray;
+        }
+
+        while (favDbCursor.moveToNext()) {
+            JSONObject oneMovieData = TmdbDigger.extractOneMovieDataAtCursor(context, favDbCursor);
+
+            moviesArray.put(oneMovieData);
+        }
+
+        return moviesArray;
     }
 }

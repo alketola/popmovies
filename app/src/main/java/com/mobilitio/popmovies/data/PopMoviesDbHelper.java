@@ -12,7 +12,7 @@ import android.util.Log;
 public class PopMoviesDbHelper extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "popmovies.db";
-    public static final int DB_VERSION = 1;
+    public static final int DB_VERSION = 3;
     private static SQLiteDatabase.CursorFactory factory = null;
 
     public PopMoviesDbHelper(Context context) {

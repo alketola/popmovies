@@ -1,7 +1,11 @@
 package com.mobilitio.popmovies;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.database.Cursor;
 import android.util.Log;
+
+import com.mobilitio.popmovies.data.PopMoviesDbContract;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -194,7 +198,9 @@ public class TmdbDigger {
 
             e.printStackTrace();
         }
-        postername = postername.substring(1);
+        if (postername.length() > 0) {
+            postername = postername.substring(1);
+        }
         return postername;
 
     }
@@ -288,5 +294,119 @@ public class TmdbDigger {
         int id = 0;
         id = extractIntField(context.getString(R.string.tmdb_res_movie_id), jsonObject);
         return id;
+    }
+// Methods for dealing with TMDB data stored in our Content provider.
+// I opted for simplicity so that working code of MainActivity and DetailActivity would
+// be minimally affected, thus formatting data from database to JSON accepted by the Activities.
+//
+// Available data at cursor:
+//        PopMoviesDbContract.MovieEntry.COLUMN_ORIGINAL_TITLE,
+//        PopMoviesDbContract.MovieEntry.COLUMN_POSTER_PATH, //Hmm. filename in cache?
+//        PopMoviesDbContract.MovieEntry.COLUMN_OVERVIEW,
+//        PopMoviesDbContract.MovieEntry.COLUMN_VOTE_AVERAGE,
+//        PopMoviesDbContract.MovieEntry.COLUMN_RELEASE_DATE,
+//        PopMoviesDbContract.MovieEntry.COLUMN_MOVIE_ID
+// Data reception of DetailActivity
+//        String string = intentIn.getStringExtra(getString(R.string.intent_x_jsonobject));
+//        jsonObject = TmdbDigger.oneMovieDataObjectFrom(string);
+//     Fields:
+//        mMovieTitle = TmdbDigger.extractStringField(getString(R.string.tmdb_res_title), jsonObject);
+//        imageUriString = TmdbDigger.extractPosterName(jsonObject); // ahould be
+//        mSynopsisText = TmdbDigger.extractStringField(getString(R.string.tmdb_res_overview), jsonObject);
+//        mRatingFloat = TmdbDigger.extractDecimalField(getString(R.string.tmdb_res_vote_average_decimal), jsonObject);
+//        mReleaseDate = TmdbDigger.extractStringField(getString(R.string.tmdb_res_release_date_string_yyyy_mm_dd), jsonObject);
+//        mMovieId = TmdbDigger.extractMovieId(context, jsonObject);
+    // Methods for creating a JSON object that can be received by DetailActivity
+    // Using the same format as JSON from TMDB stripped in MainActivity
+
+    // Looking at the database row at cursor, the column indicated by the resource ID
+    // is picked up and stored to JSONObject.
+    // Note that there _IS_ the convention that the column headers and JSON object names
+    // are the same!
+    // @param context, to get access to Resources, resource a.k.a. R.type.something
+    // cursor to read from, target JSONObject to yank the data to.
+    public static void stringAtCursorToJSON(Context context, int resource,
+                                            Cursor cursor, JSONObject target) {
+        Resources r = context.getResources();
+        String resourceName = r.getString(resource);
+        int column = cursor.getColumnIndex(resourceName);
+        String s = cursor.getString(column);
+
+        try {
+            target.put(resourceName, s);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return;
+    }
+
+    public static void intAtCursorToJSON(Context context, int resource, Cursor cursor, JSONObject target) {
+        Resources r = context.getResources();
+        String resourceName = r.getString(resource);
+        int column = cursor.getColumnIndex(resourceName);
+        int i = cursor.getInt(column);
+
+
+        try {
+            target.put(resourceName, i);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return;
+    }
+
+    public static void floatAtCursorToJSON(Context context, int resource, Cursor cursor, JSONObject target) {
+        Resources r = context.getResources();
+        String resourceName = r.getString(resource);
+        int column = cursor.getColumnIndex(resourceName);
+        float f = cursor.getInt(column);
+        //  movieId = favDbCursor.getInt(
+        //          favDbCursor.getColumnIndex(PopMoviesDbContract.MovieEntry.COLUMN_MOVIE_ID));
+
+        try {
+            target.put(resourceName, f);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return;
+    }
+
+    public static JSONObject movieIdAtCursorToJSON(Cursor cursor, JSONObject object) {
+        int column = cursor.getColumnIndex(PopMoviesDbContract.MovieEntry.COLUMN_MOVIE_ID);
+        int i = cursor.getInt(column);
+
+        try {
+            object.put("id", i);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return object;
+    }
+
+    public static JSONObject extractOneMovieDataAtCursor(Context context, Cursor cursor) {
+        JSONObject json = new JSONObject();
+        TmdbDigger.movieIdAtCursorToJSON(cursor, json);
+
+        TmdbDigger.stringAtCursorToJSON(context,
+                R.string.tmdb_res_release_date_string_yyyy_mm_dd,
+                cursor, json);
+
+        TmdbDigger.floatAtCursorToJSON(context,
+                R.string.tmdb_res_vote_average_decimal,
+                cursor, json);
+
+        TmdbDigger.stringAtCursorToJSON(context,
+                R.string.tmdb_res_overview,
+                cursor, json);
+
+        TmdbDigger.stringAtCursorToJSON(context,
+                R.string.tmdb_res_poster,
+                cursor, json);
+
+        TmdbDigger.stringAtCursorToJSON(context,
+                R.string.tmdb_res_original_title,
+                cursor, json);
+        return json;
+
     }
 }
