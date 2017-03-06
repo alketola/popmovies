@@ -463,12 +463,16 @@ public class DetailActivity extends AppCompatActivity {
                 reviewAuthorView.setText(reviewAuthor);
                 reviewAuthorView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelSize(R.dimen.detail_h2_size));
                 reviewAuthorView.setTypeface(null, Typeface.BOLD);
+                int padding = getResources().getDimensionPixelSize(R.dimen.margin_minimal);
+                reviewAuthorView.setPadding(padding, padding, padding, padding);
                 reviewAuthorView.setLayoutParams(new LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                 reviewList.addView(reviewAuthorView);
 
                 TextView reviewContentView = new TextView(getBaseContext());
                 reviewContentView.setText(reviewContent);
+                padding = getResources().getDimensionPixelSize(R.dimen.margin_a);
+                reviewContentView.setPadding(padding, padding, padding, padding);
                 reviewContentView.setLayoutParams(new LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
