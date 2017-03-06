@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -456,9 +459,19 @@ public class DetailActivity extends AppCompatActivity {
                 String reviewContent = TmdbDigger.extractStringField("content", reviewObject);
 
                 boolean result = mReviews.add(new ReviewData(reviewAuthor, reviewContent));
+                TextView reviewAuthorView = new TextView(getBaseContext());
+                reviewAuthorView.setText(reviewAuthor);
+                reviewAuthorView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelSize(R.dimen.detail_h2_size));
+                reviewAuthorView.setTypeface(null, Typeface.BOLD);
+                reviewAuthorView.setLayoutParams(new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                reviewList.addView(reviewAuthorView);
+
                 TextView reviewContentView = new TextView(getBaseContext());
                 reviewContentView.setText(reviewContent);
-                reviewContentView.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                reviewContentView.setLayoutParams(new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
                 reviewList.addView(reviewContentView);
 
             }
