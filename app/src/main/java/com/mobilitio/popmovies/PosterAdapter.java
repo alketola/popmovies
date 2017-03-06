@@ -107,9 +107,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
             String imagefile = new String();
 
             JSONObject dataToDetailActivity = extractOneMovieData(adapterPosition, mMovieData);
-            //String imageurlstring = TmdbUriUtil.buildImageUri(context, imagefile, getImageSizePathString(mPosterWidthPx))
-            //        .toString();
-            //mPosterOnclickListener.onPosterClick(adapterPosition, imageurlstring); //TODO remove
+
             String dataString;
             dataString = dataToDetailActivity.toString();
             mPosterOnclickListener.onPosterClick(adapterPosition, dataToDetailActivity);
@@ -137,9 +135,6 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
             } else {
                 Log.e(TAG, "imagefilename = null");
             }
-
-
         }
-
     }
 }

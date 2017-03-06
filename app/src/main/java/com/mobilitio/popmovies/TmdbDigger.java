@@ -282,8 +282,9 @@ public class TmdbDigger {
             Log.w(TAG, "JARRAY had eaten something bad: " + array.toString());
             e.printStackTrace();
         }
+        if (jsonObject == null) return "";
         try {
-            key = jsonObject.getString(context.getString(R.string.tmdb_res_video_key));
+            key = jsonObject.getString(context.getString(R.string.tmdb_res_key)); //"key"
         } catch (JSONException e) {
             e.printStackTrace();
         }

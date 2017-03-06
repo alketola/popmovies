@@ -42,7 +42,7 @@
     <string name="tmdb_res_adult_boolean">adult</string>
     <string name="tmdb_res_original_title">original_title</string>
     <!-- video JSONArray result keys -->
-    <string name="tmdb_res_video_key">key</string>
+    <string name="tmdb_res_key">key</string>
     <string name="tmdb_res_video_site">site</string>
     <string name="tmdb_res_video_site_youtube">YouTube</string>
     <string name="tmdb_res_video_name">name</string>

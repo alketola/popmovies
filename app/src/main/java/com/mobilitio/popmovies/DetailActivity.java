@@ -7,7 +7,11 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.util.DisplayMetrics;
@@ -15,9 +19,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +36,9 @@ import org.json.JSONObject;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
+import static com.mobilitio.popmovies.R.id.review_list;
 import static com.mobilitio.popmovies.TmdbDigger.extractDecimalField;
 import static com.mobilitio.popmovies.TmdbDigger.extractStringField;
 
@@ -41,6 +49,99 @@ import static com.mobilitio.popmovies.TmdbDigger.extractStringField;
 public class DetailActivity extends AppCompatActivity {
     private static final String TAG = DetailActivity.class.getSimpleName();
 
+    private class VideoData {
+        public String name;
+        public URL url;
+
+        public VideoData(String name, URL url) {
+            this.name = name;
+            this.url = url;
+        }
+    }
+
+    private class ReviewData {
+        public String author;
+        public String content;
+
+        public ReviewData(String author, String content) {
+            this.author = author;
+            this.content = content;
+        }
+    }
+
+    private class VideoButtonAdapter extends ArrayAdapter<VideoData> {
+        Context context;
+        int resource;
+        List<VideoData> videoDatas;
+
+        public VideoButtonAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<VideoData> objects) {
+            super(context, resource, objects);
+            this.context = context;
+            this.resource = resource;
+            videoDatas = objects;
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            Button b = (Button) getLayoutInflater().inflate(resource, null);
+            b.setText(videoDatas.get(position).name);
+            final URL url = videoDatas.get(position).url;
+            b.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()));
+                    startActivity(intent);
+                }
+            });
+            return b;
+            //return super.getView(position, convertView, parent);
+        }
+
+        @Override
+        public int getCount() {
+            return videoDatas.size();
+        }
+    }
+
+    private class ReviewListAdapter extends ArrayAdapter<ReviewData> {
+        Context context;
+        int resource;
+        List<ReviewData> reviewDatas;
+
+        public ReviewListAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<ReviewData> objects) {
+            super(context, resource, objects);
+            this.context = context;
+            this.resource = resource;
+            reviewDatas = objects;
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            String reviewAuthor = reviewDatas.get(position).author;
+            String content = reviewDatas.get(position).content;
+            LinearLayout lin = (LinearLayout) getLayoutInflater().inflate(resource, null);
+
+            TextView authorTv = new TextView(getApplicationContext());
+
+            authorTv.setText(reviewAuthor);
+
+            TextView reviewTv = new TextView(getApplicationContext());
+
+            reviewTv.setText(content);
+
+            lin.addView(authorTv);
+            lin.addView(reviewTv);
+            return (View) lin;
+        }
+
+        @Override
+        public int getCount() {
+            return reviewDatas.size();
+        }
+    }
+
     // module variables shown in the activity UI and put to database
     String mMovieTitle;
     int mMovieId = 0;
@@ -49,13 +150,17 @@ public class DetailActivity extends AppCompatActivity {
     float mRatingFloat;
     String mReleaseDate;
     boolean mFavoriteOn;
+    VideoButtonAdapter mVideoListAdapter;
+    ReviewListAdapter mReviewListAdapter;
     String mShortImageUriString = new String();
 
     ImageView mDetailIv;
     AppCompatCheckBox favouriteButton;
     private View.OnClickListener mFavouriteOnClickListener;
-    private ArrayList<URL> mVideoURLs = new ArrayList<URL>();
-    private ArrayList<String> mReviews = new ArrayList<String>();
+
+    // Instantiate
+    private ArrayList<VideoData> mVideoURLs = new ArrayList<>();
+    private ArrayList<ReviewData> mReviews = new ArrayList<>();
 
 
     @Override
@@ -166,19 +271,17 @@ public class DetailActivity extends AppCompatActivity {
         TextView tv_release_date = (TextView) findViewById(R.id.tv_release_date);
         tv_release_date.setText(mReleaseDate);
 
-        ArrayAdapter<URL> videoListAdapter;
-        videoListAdapter = new ArrayAdapter<URL>(this,
-                android.R.layout.simple_list_item_1, mVideoURLs);
+        mVideoListAdapter = new VideoButtonAdapter(this,
+                R.layout.video_list_item, mVideoURLs);
+
         FetchMovieVideosTask videoLister = new FetchMovieVideosTask();
-        ListView lv_videoList = (ListView) findViewById(R.id.videoList);
-        lv_videoList.setAdapter(videoListAdapter);
+        LinearLayout lv_videoList = (LinearLayout) findViewById(R.id.video_list);
+        ///lv_videoList.setAdapter(mVideoListAdapter);
         videoLister.execute(mMovieId);
 
-        ArrayAdapter<String> reviewListAdapter;
-        reviewListAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, mReviews);
-        ListView lv_reviewList = (ListView) findViewById(R.id.reviewList);
-        lv_reviewList.setAdapter(reviewListAdapter);
+
+        mReviewListAdapter = new ReviewListAdapter(this,
+                R.layout.review_item, mReviews);
 
         FetchReviewsTask reviewLister = new FetchReviewsTask();
         reviewLister.execute(mMovieId);
@@ -280,16 +383,18 @@ public class DetailActivity extends AppCompatActivity {
             Context context = getApplicationContext();
             JSONArray jsonArray = TmdbDigger.extractJSONArray(context, jsonString);
             int length = TmdbDigger.getArrayLength(jsonArray);
-
+            LinearLayout videoList = (LinearLayout) findViewById(R.id.video_list);
             for (int i = 0; i < length; i++) {
                 String videoKey = TmdbDigger.extractKey(context, jsonArray, i);
                 URL url = TmdbUriUtil.buildYouTubeURL(context, videoKey);
-
-                boolean result = mVideoURLs.add(url);
-                Log.d(TAG, "Added URL " + i + ": " + url.toString() + " result = " + result);
+                JSONObject jsonObject = TmdbDigger.extractOneMovieData(i, jsonArray);
+                String videoName = TmdbDigger.extractStringField("name", jsonObject);
+                boolean result = mVideoURLs.add(new VideoData(videoName, url));
+                videoList.addView(mVideoListAdapter.getView(i, null, null));
+                Log.d(TAG, "Added video name=" + videoName + " URL=" + i + ": " + url.toString() + " result = " + result);
             }
-            ListView lv_videoList = (ListView) findViewById(R.id.videoList);
-            lv_videoList.invalidateViews();
+
+//            videoList.invalidateViews();
         }
     } // end FetchMovieVideos Task
 
@@ -332,22 +437,31 @@ public class DetailActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String jsonString) {
             super.onPostExecute(jsonString);
+            if (jsonString.length() == 0) return;
             Context context = getApplicationContext();
             JSONArray jsonArray = TmdbDigger.extractJSONArray(context, jsonString);
+            if (jsonArray == null) return;
             int length = TmdbDigger.getArrayLength(jsonArray);
-            String reviewKey = TmdbDigger.extractKey(context, jsonArray, 0);
+
+            //debug info, url not used
             URL url = TmdbUriUtil.buildReviewURL(context, movieId, MainActivity.mApiKey);
             Log.d(TAG, "ReviewURL: " + url.toString());
+            //end debug info
+            LinearLayout reviewList = (LinearLayout) findViewById(R.id.video_list);
+
             for (int i = 0; i < length; i++) {
 
                 JSONObject reviewObject = TmdbDigger.extractOneMovieData(i, jsonArray);
-                String review = TmdbDigger.extractStringField("content", reviewObject);
-                mReviews.add(review);
+                String reviewAuthor = TmdbDigger.extractStringField("author", reviewObject);
+                String reviewContent = TmdbDigger.extractStringField("content", reviewObject);
+
+                boolean result = mReviews.add(new ReviewData(reviewAuthor, reviewContent));
+                TextView reviewContentView = new TextView(getBaseContext());
+                reviewContentView.setText(reviewContent);
+                reviewContentView.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                reviewList.addView(reviewContentView);
 
             }
-            ListView lv_reviewList = (ListView) findViewById(R.id.reviewList);
-            lv_reviewList.invalidateViews();
         }
     } // end FetchReviewsTask Task
-
 }
