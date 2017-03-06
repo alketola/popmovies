@@ -19,4 +19,5 @@
     <string name="favourite_title">Favourite</string>
     <string name="search_my_favourites">search_mode_favourites</string>
     <string name="search_my_favourites_title">PopMovies - My Favourites</string>
+    <string name="movie_favorited_success_message">Movie added to favourites, id</string>
 </resources>

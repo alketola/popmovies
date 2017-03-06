@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/video_list_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/margin_a"
+    android:layout_marginLeft="@dimen/margin_a"
+    android:layout_marginRight="@dimen/margin_a"
+    android:layout_marginStart="@dimen/margin_a"
+    android:layout_marginTop="@dimen/margin_a"
+    android:drawableLeft="@drawable/ic_videobutton"
+    android:minWidth="72dp"
+    android:text="This is a video, click button."
+    android:textSize="@dimen/detail_overview_text_size" />
+

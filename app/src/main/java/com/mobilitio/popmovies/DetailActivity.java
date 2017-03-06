@@ -1,5 +1,6 @@
 package com.mobilitio.popmovies;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +13,6 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.util.DisplayMetrics;
@@ -26,7 +26,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +40,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.mobilitio.popmovies.R.id.review_list;
 import static com.mobilitio.popmovies.TmdbDigger.extractDecimalField;
 import static com.mobilitio.popmovies.TmdbDigger.extractStringField;
 
@@ -107,44 +105,6 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
-    private class ReviewListAdapter extends ArrayAdapter<ReviewData> {
-        Context context;
-        int resource;
-        List<ReviewData> reviewDatas;
-
-        public ReviewListAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<ReviewData> objects) {
-            super(context, resource, objects);
-            this.context = context;
-            this.resource = resource;
-            reviewDatas = objects;
-        }
-
-        @NonNull
-        @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            String reviewAuthor = reviewDatas.get(position).author;
-            String content = reviewDatas.get(position).content;
-            LinearLayout lin = (LinearLayout) getLayoutInflater().inflate(resource, null);
-
-            TextView authorTv = new TextView(getApplicationContext());
-
-            authorTv.setText(reviewAuthor);
-
-            TextView reviewTv = new TextView(getApplicationContext());
-
-            reviewTv.setText(content);
-
-            lin.addView(authorTv);
-            lin.addView(reviewTv);
-            return (View) lin;
-        }
-
-        @Override
-        public int getCount() {
-            return reviewDatas.size();
-        }
-    }
-
     // module variables shown in the activity UI and put to database
     String mMovieTitle;
     int mMovieId = 0;
@@ -152,13 +112,13 @@ public class DetailActivity extends AppCompatActivity {
     String mSynopsisText;
     float mRatingFloat;
     String mReleaseDate;
-    boolean mFavoriteOn;
+    boolean mFavouriteOn;
     VideoButtonAdapter mVideoListAdapter;
-    ReviewListAdapter mReviewListAdapter;
+
     String mShortImageUriString = new String();
 
     ImageView mDetailIv;
-    AppCompatCheckBox favouriteButton;
+
     private View.OnClickListener mFavouriteOnClickListener;
 
     // Instantiate
@@ -178,16 +138,12 @@ public class DetailActivity extends AppCompatActivity {
         JSONObject jsonObject = null;
 
         // Extract received data
-        if (intentIn.hasExtra(getString(R.string.intent_x_imageuri))) {
-            mShortImageUriString = intentIn.getStringExtra(getString(R.string.intent_x_imageuri));
-//            Log.d(TAG, "received intent with imageuri=" + imageUriString + "- not supported any more");
-        } else if (intentIn.hasExtra(getString(R.string.intent_x_jsonobject))) {
-//            Log.d(TAG, "received JSON intent");
+        if (intentIn.hasExtra(getString(R.string.intent_x_jsonobject))) {
             String string = intentIn.getStringExtra(getString(R.string.intent_x_jsonobject));
             jsonObject = TmdbDigger.oneMovieDataObjectFrom(string);
             mShortImageUriString = TmdbDigger.extractPosterName(jsonObject);
             mMovieId = TmdbDigger.extractMovieId(context, jsonObject);
-            mFavoriteOn = movieIsInDB(mMovieId);
+            mFavouriteOn = movieIsInDB(mMovieId);
 //            Log.d(TAG, "UriString from JSON:" + imageUriString);
         }
         // Measure display for semi-automatic layout tuning
@@ -222,7 +178,9 @@ public class DetailActivity extends AppCompatActivity {
 
         TextView tv_movie_title = (TextView) findViewById(R.id.tv_movie_title);
         tv_movie_title.setText(mMovieTitle);
-//        setTitle(mMovieTitle); I would prefer putting movie title to app title
+        //        setTitle(mMovieTitle);
+        // I would prefer putting movie title to app title to save screen real estate
+        // But specs are specs ;-)
 
         String sizePath = TmdbUriUtil.getImageSizePathString(imageSize);
         mImageURIString = TmdbUriUtil.buildImageUri(this, mShortImageUriString, sizePath).toString();
@@ -239,31 +197,28 @@ public class DetailActivity extends AppCompatActivity {
 
         // There's the favourite checkbox which can be clicked to set the movie as favourite
         mFavouriteOnClickListener = new View.OnClickListener() {
-            final AppCompatCheckBox clickableFavTitle = (AppCompatCheckBox) findViewById(R.id.tv_favourite_title);
+
 
             void toggle() {
-                if (!mFavoriteOn) mFavoriteOn = true;
-                else mFavoriteOn = false;
-                Log.d(TAG, "toggle()=" + mFavoriteOn);
+                if (!mFavouriteOn) mFavouriteOn = true;
+                else mFavouriteOn = false;
+                Log.d(TAG, "toggle()=" + mFavouriteOn);
             }
 
             @Override
             public void onClick(View view) {
                 toggle();
-                if (mFavoriteOn) {
-                    clickableFavTitle.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorFavouriteOn));
-                    // here I would set a movie a favourite in ContentProvider
-                    addMovieToDb(getApplicationContext());
-                } else {
-                    clickableFavTitle.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorFavouriteOff));
-                    deleteMovieFromDb(getApplicationContext());
-                }
-                Log.d(TAG, "Clicked Favourite:" + mFavoriteOn);
+                saveFavourite(mFavouriteOn);
+                visualizeFavourite(mFavouriteOn);
+
+                Log.d(TAG, "Clicked Favourite:" + mFavouriteOn);
             }
         };
-        favouriteButton = (AppCompatCheckBox) findViewById(R.id.tv_favourite_title);
-        favouriteButton.setOnClickListener(mFavouriteOnClickListener);
-        favouriteButton.setChecked(movieIsInDB(mMovieId));
+        AppCompatCheckBox favouriteCheckBox = (AppCompatCheckBox) findViewById(R.id.tv_favourite_title);
+        favouriteCheckBox.setOnClickListener(mFavouriteOnClickListener);
+
+        visualizeFavourite(movieIsInDB(mMovieId));
+        // We're still in onCreate, so no saving state, it is what it is at this time
 
         mRatingFloat = extractDecimalField(getString(R.string.tmdb_res_vote_average_decimal), jsonObject);
         String ratingString = String.valueOf(mRatingFloat);
@@ -282,14 +237,34 @@ public class DetailActivity extends AppCompatActivity {
         ///lv_videoList.setAdapter(mVideoListAdapter);
         videoLister.execute(mMovieId);
 
-
-        mReviewListAdapter = new ReviewListAdapter(this,
-                R.layout.review_item, mReviews);
-
         FetchReviewsTask reviewLister = new FetchReviewsTask();
         reviewLister.execute(mMovieId);
 
     } // end onCreate
+
+
+    private void saveFavourite(boolean favourite) {
+        Context context = getApplicationContext();
+        if (favourite) {
+            addMovieToDb(context);
+        } else {
+            deleteMovieFromDb(context);
+        }
+    }
+
+    private void visualizeFavourite(boolean isFavourite) {
+        final AppCompatCheckBox clickableFavTitle = (AppCompatCheckBox) findViewById(R.id.tv_favourite_title);
+        AppCompatCheckBox favouriteCheckBox = (AppCompatCheckBox) findViewById(R.id.tv_favourite_title);
+        if (isFavourite) {
+            clickableFavTitle.setTextColor(ContextCompat
+                    .getColor(getApplicationContext(), R.color.colorFavouriteOn));
+            // here I would set a movie a favourite in ContentProvider
+        } else {
+            clickableFavTitle.setTextColor(ContextCompat
+                    .getColor(getApplicationContext(), R.color.colorFavouriteOff));
+        }
+        favouriteCheckBox.setChecked(isFavourite);
+    }
 
     @Override
     protected void onPause() {
@@ -321,7 +296,9 @@ public class DetailActivity extends AppCompatActivity {
 
         Uri uri = getContentResolver().insert(PopMoviesDbContract.MovieEntry.CONTENT_URI, movieDataCV);
         if (uri != null) {
-            Toast.makeText(getBaseContext(), uri.toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getBaseContext(),
+                    getString(R.string.movie_favorited_success_message)
+                            + " " + mMovieId, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -396,8 +373,6 @@ public class DetailActivity extends AppCompatActivity {
                 videoList.addView(mVideoListAdapter.getView(i, null, null));
                 Log.d(TAG, "Added video name=" + videoName + " URL=" + i + ": " + url.toString() + " result = " + result);
             }
-
-//            videoList.invalidateViews();
         }
     } // end FetchMovieVideos Task
 
@@ -450,7 +425,7 @@ public class DetailActivity extends AppCompatActivity {
             URL url = TmdbUriUtil.buildReviewURL(context, movieId, MainActivity.mApiKey);
             Log.d(TAG, "ReviewURL: " + url.toString());
             //end debug info
-            LinearLayout reviewList = (LinearLayout) findViewById(R.id.video_list);
+            LinearLayout reviewList = (LinearLayout) findViewById(R.id.review_list);
 
             for (int i = 0; i < length; i++) {
 
@@ -460,10 +435,10 @@ public class DetailActivity extends AppCompatActivity {
 
                 boolean result = mReviews.add(new ReviewData(reviewAuthor, reviewContent));
                 TextView reviewAuthorView = new TextView(getBaseContext());
-                reviewAuthorView.setText(reviewAuthor);
-                reviewAuthorView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelSize(R.dimen.detail_h2_size));
-                reviewAuthorView.setTypeface(null, Typeface.BOLD);
-                int padding = getResources().getDimensionPixelSize(R.dimen.margin_minimal);
+                reviewAuthorView.setText(reviewAuthor + ": ");
+                reviewAuthorView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelSize(R.dimen.detail_h3_size));
+                reviewAuthorView.setTypeface(null, Typeface.BOLD_ITALIC);
+                int padding = getResources().getDimensionPixelSize(R.dimen.margin_a);
                 reviewAuthorView.setPadding(padding, padding, padding, padding);
                 reviewAuthorView.setLayoutParams(new LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));

@@ -192,7 +192,7 @@
                     android:orientation="vertical" />
 
                 <TextView
-                    android:id="@+id/reviewListTitle"
+                    android:id="@+id/review_list_titleitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/margin_a"
@@ -205,7 +205,7 @@
                     android:textStyle="bold" />
 
                 <LinearLayout
-                    android:id="@+id/reviewList"
+                    android:id="@+id/review_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />

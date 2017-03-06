@@ -165,20 +165,20 @@
             android:id="@+id/video_list_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Trailers"
             android:layout_marginEnd="@dimen/margin_a"
             android:layout_marginLeft="@dimen/margin_a"
             android:layout_marginRight="@dimen/margin_a"
             android:layout_marginStart="@dimen/margin_a"
             android:layout_marginTop="@dimen/margin_a"
+            android:text="Trailers"
             android:textSize="@dimen/detail_h2_size"
             android:textStyle="bold" />
 
         <LinearLayout
-            android:orientation="vertical"
             android:id="@+id/video_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
 
         <TextView
             android:id="@+id/review_list_title"
@@ -194,9 +194,9 @@
             android:textStyle="bold" />
 
         <LinearLayout
-            android:orientation="vertical"
             android:id="@+id/review_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"></LinearLayout>
     </LinearLayout>
 </ScrollView>
