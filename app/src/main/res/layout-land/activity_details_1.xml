@@ -149,7 +149,8 @@
             android:textStyle="bold" />
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:fillViewport="true">
 
             <TextView
                 android:id="@+id/tv_synopsis"
@@ -163,6 +164,42 @@
                 android:minWidth="72dp"
                 android:text="@string/overview_text_default"
                 android:textSize="@dimen/detail_overview_text_size" />
+
+            <TextView
+                android:id="@+id/videoListTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Trailers"
+                android:layout_marginEnd="@dimen/margin_a"
+                android:layout_marginLeft="@dimen/margin_a"
+                android:layout_marginRight="@dimen/margin_a"
+                android:layout_marginStart="@dimen/margin_a"
+                android:layout_marginTop="@dimen/margin_a"
+                android:textSize="@dimen/detail_h2_size"
+                android:textStyle="bold" />
+
+            <ListView
+                android:id="@+id/videoList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/reviewListTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Reviews"
+                android:layout_marginEnd="@dimen/margin_a"
+                android:layout_marginLeft="@dimen/margin_a"
+                android:layout_marginRight="@dimen/margin_a"
+                android:layout_marginStart="@dimen/margin_a"
+                android:layout_marginTop="@dimen/margin_a"
+                android:textSize="@dimen/detail_h2_size"
+                android:textStyle="bold" />
+
+            <ListView
+                android:id="@+id/reviewList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </ScrollView>
     </LinearLayout>
 </LinearLayout>

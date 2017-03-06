@@ -272,7 +272,7 @@ public class TmdbDigger {
         return array.length();
     }
 
-    public static String extractVideoKey(Context context, JSONArray array, int index) {
+    public static String extractKey(Context context, JSONArray array, int index) {
 
         JSONObject jsonObject = null;
         String key = "";

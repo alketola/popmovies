@@ -15,7 +15,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +29,7 @@ import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import static com.mobilitio.popmovies.TmdbDigger.extractDecimalField;
 import static com.mobilitio.popmovies.TmdbDigger.extractStringField;
@@ -51,6 +54,8 @@ public class DetailActivity extends AppCompatActivity {
     ImageView mDetailIv;
     AppCompatCheckBox favouriteButton;
     private View.OnClickListener mFavouriteOnClickListener;
+    private ArrayList<URL> mVideoURLs = new ArrayList<URL>();
+    private ArrayList<String> mReviews = new ArrayList<String>();
 
 
     @Override
@@ -64,7 +69,7 @@ public class DetailActivity extends AppCompatActivity {
 
         JSONObject jsonObject = null;
 
-        // Extract recived data
+        // Extract received data
         if (intentIn.hasExtra(getString(R.string.intent_x_imageuri))) {
             mShortImageUriString = intentIn.getStringExtra(getString(R.string.intent_x_imageuri));
 //            Log.d(TAG, "received intent with imageuri=" + imageUriString + "- not supported any more");
@@ -123,11 +128,8 @@ public class DetailActivity extends AppCompatActivity {
         mSynopsisText = extractStringField(getString(R.string.tmdb_res_overview), jsonObject);
 
         tv_synopsis.setText(mSynopsisText);
-        // here we have a star button
-//        final AppCompatImageButton ib_star = (AppCompatImageButton) findViewById(R.id.favourite_star_button);
-//        ib_star.setImageResource(R.drawable.ic_star1_empty);
 
-        // There's favourite checkbox which can be clicked to set the movie as favourite
+        // There's the favourite checkbox which can be clicked to set the movie as favourite
         mFavouriteOnClickListener = new View.OnClickListener() {
             final AppCompatCheckBox clickableFavTitle = (AppCompatCheckBox) findViewById(R.id.tv_favourite_title);
 
@@ -155,9 +157,6 @@ public class DetailActivity extends AppCompatActivity {
         favouriteButton.setOnClickListener(mFavouriteOnClickListener);
         favouriteButton.setChecked(movieIsInDB(mMovieId));
 
-        FetchMovieVideosTask videoLister = new FetchMovieVideosTask();
-        videoLister.execute(mMovieId);
-
         mRatingFloat = extractDecimalField(getString(R.string.tmdb_res_vote_average_decimal), jsonObject);
         String ratingString = String.valueOf(mRatingFloat);
         TextView tv_rating = (TextView) findViewById(R.id.tv_rating_decimal_number);
@@ -166,6 +165,24 @@ public class DetailActivity extends AppCompatActivity {
         mReleaseDate = extractStringField(getString(R.string.tmdb_res_release_date_string_yyyy_mm_dd), jsonObject);
         TextView tv_release_date = (TextView) findViewById(R.id.tv_release_date);
         tv_release_date.setText(mReleaseDate);
+
+        ArrayAdapter<URL> videoListAdapter;
+        videoListAdapter = new ArrayAdapter<URL>(this,
+                android.R.layout.simple_list_item_1, mVideoURLs);
+        FetchMovieVideosTask videoLister = new FetchMovieVideosTask();
+        ListView lv_videoList = (ListView) findViewById(R.id.videoList);
+        lv_videoList.setAdapter(videoListAdapter);
+        videoLister.execute(mMovieId);
+
+        ArrayAdapter<String> reviewListAdapter;
+        reviewListAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, mReviews);
+        ListView lv_reviewList = (ListView) findViewById(R.id.reviewList);
+        lv_reviewList.setAdapter(reviewListAdapter);
+
+        FetchReviewsTask reviewLister = new FetchReviewsTask();
+        reviewLister.execute(mMovieId);
+
     } // end onCreate
 
     @Override
@@ -263,11 +280,74 @@ public class DetailActivity extends AppCompatActivity {
             Context context = getApplicationContext();
             JSONArray jsonArray = TmdbDigger.extractJSONArray(context, jsonString);
             int length = TmdbDigger.getArrayLength(jsonArray);
+
             for (int i = 0; i < length; i++) {
-                String videoKey = TmdbDigger.extractVideoKey(context, jsonArray, i);
+                String videoKey = TmdbDigger.extractKey(context, jsonArray, i);
                 URL url = TmdbUriUtil.buildYouTubeURL(context, videoKey);
-                Log.d(TAG, "VideoURL " + i + ": " + url.toString());
+
+                boolean result = mVideoURLs.add(url);
+                Log.d(TAG, "Added URL " + i + ": " + url.toString() + " result = " + result);
             }
+            ListView lv_videoList = (ListView) findViewById(R.id.videoList);
+            lv_videoList.invalidateViews();
         }
-    }
+    } // end FetchMovieVideos Task
+
+    /*
+     * Returns JSONObject that contains JSONArray in "result" tuple.
+     */
+    private class FetchReviewsTask extends AsyncTask<Integer, Void, String> {
+        int movieId;
+
+        /* @param ints[0] tmdb movie id number */
+        @Override
+        protected String doInBackground(Integer... ints) {
+            String jsonTMDBResponse = null;
+            movieId = ints[0];
+
+            Uri reviewListUri = TmdbUriUtil.buildReviewListUri(getApplicationContext(), movieId,
+                    MainActivity.mApiKey);
+
+            URL reviewListURL = null;
+            try {
+                reviewListURL = new URL(reviewListUri.toString());
+            } catch (MalformedURLException e) {
+                Log.e(TAG, "The reviewUri had eaten something bad" + reviewListUri.toString());
+                e.printStackTrace();
+            }
+
+            try {
+                jsonTMDBResponse = TmdbDigger.getResponseFromHttpUrl(reviewListURL);
+                Log.v(TAG, "Fetch reviews, Response=" + jsonTMDBResponse.substring(0, 100));
+
+            } catch (Exception e) {
+                Log.e(TAG, "Problems with response from URL:" + reviewListURL);
+
+                e.printStackTrace();
+            }
+
+            return jsonTMDBResponse;
+        }
+
+        @Override
+        protected void onPostExecute(String jsonString) {
+            super.onPostExecute(jsonString);
+            Context context = getApplicationContext();
+            JSONArray jsonArray = TmdbDigger.extractJSONArray(context, jsonString);
+            int length = TmdbDigger.getArrayLength(jsonArray);
+            String reviewKey = TmdbDigger.extractKey(context, jsonArray, 0);
+            URL url = TmdbUriUtil.buildReviewURL(context, movieId, MainActivity.mApiKey);
+            Log.d(TAG, "ReviewURL: " + url.toString());
+            for (int i = 0; i < length; i++) {
+
+                JSONObject reviewObject = TmdbDigger.extractOneMovieData(i, jsonArray);
+                String review = TmdbDigger.extractStringField("content", reviewObject);
+                mReviews.add(review);
+
+            }
+            ListView lv_reviewList = (ListView) findViewById(R.id.reviewList);
+            lv_reviewList.invalidateViews();
+        }
+    } // end FetchReviewsTask Task
+
 }

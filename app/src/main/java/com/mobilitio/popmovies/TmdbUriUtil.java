@@ -117,7 +117,23 @@ public class TmdbUriUtil {
         }
     }
 
-//    public static URL buildVideoURLs(Context context, JSONArray videoResults) {
-//
-//    }
+    public static URL buildReviewURL(Context context, int movieId, String apiKey) {
+        Resources res = context.getResources();
+        Uri.Builder ub = new Uri.Builder();
+        Uri uri = ub.scheme("https").authority("api.themoviedb.org")
+                .appendPath(res.getString(R.string.tmdb_api_v3))
+                .appendPath(res.getString(R.string.tmdb_api_movie))
+                .appendPath(String.valueOf(movieId))
+                .appendPath(res.getString(R.string.tmdb_api_reviews))
+                .appendQueryParameter("api_key", apiKey)
+                .build();
+        URL reviewUrl = null;
+        try {
+            reviewUrl = new URL(uri.toString());
+        } catch (MalformedURLException e) {
+            Log.w(TAG, "Malformed URL for review, movieId:" + movieId + " uri:" + uri.toString());
+        } finally {
+            return reviewUrl;
+        }
+    }
 }

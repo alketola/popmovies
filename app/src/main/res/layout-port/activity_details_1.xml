@@ -73,6 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <TextView
                 android:id="@+id/tv_rating_title"
                 android:layout_width="@dimen/tv_detail_title_width"
@@ -89,6 +90,7 @@
                 android:textStyle="bold"
                 tools:layout_editor_absoluteX="16dp"
                 tools:layout_editor_absoluteY="216dp" />
+
             <TextView
                 android:id="@+id/tv_rating_decimal_number"
                 android:layout_width="@dimen/tv_detail_value_width"
@@ -131,19 +133,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-        <TextView
-            android:id="@+id/synopsisTitle"
-            android:layout_width="155dp"
-            android:layout_height="33dp"
-            android:layout_marginEnd="@dimen/margin_a"
-            android:layout_marginLeft="@dimen/margin_a"
-            android:layout_marginRight="@dimen/margin_a"
-            android:layout_marginStart="@dimen/margin_a"
-            android:layout_marginTop="@dimen/margin_a"
-            android:text="@string/synopsis_title_default"
-            android:textSize="@dimen/detail_h2_size"
-            android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/synopsisTitle"
+                android:layout_width="155dp"
+                android:layout_height="33dp"
+                android:layout_marginEnd="@dimen/margin_a"
+                android:layout_marginLeft="@dimen/margin_a"
+                android:layout_marginRight="@dimen/margin_a"
+                android:layout_marginStart="@dimen/margin_a"
+                android:layout_marginTop="@dimen/margin_a"
+                android:text="@string/synopsis_title_default"
+                android:textSize="@dimen/detail_h2_size"
+                android:textStyle="bold" />
         </LinearLayout>
+
         <TextView
             android:id="@+id/tv_synopsis"
             android:layout_width="match_parent"
@@ -157,5 +161,40 @@
             android:text="@string/overview_text_default"
             android:textSize="@dimen/detail_overview_text_size" />
 
+        <TextView
+            android:id="@+id/videoListTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Trailers"
+            android:layout_marginEnd="@dimen/margin_a"
+            android:layout_marginLeft="@dimen/margin_a"
+            android:layout_marginRight="@dimen/margin_a"
+            android:layout_marginStart="@dimen/margin_a"
+            android:layout_marginTop="@dimen/margin_a"
+            android:textSize="@dimen/detail_h2_size"
+            android:textStyle="bold" />
+
+        <ListView
+            android:id="@+id/videoList"
+            android:layout_width="match_parent"
+            android:layout_height="300px" />
+
+        <TextView
+            android:id="@+id/reviewListTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Reviews"
+            android:layout_marginEnd="@dimen/margin_a"
+            android:layout_marginLeft="@dimen/margin_a"
+            android:layout_marginRight="@dimen/margin_a"
+            android:layout_marginStart="@dimen/margin_a"
+            android:layout_marginTop="@dimen/margin_a"
+            android:textSize="@dimen/detail_h2_size"
+            android:textStyle="bold" />
+
+        <ListView
+            android:id="@+id/reviewList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 </ScrollView>
