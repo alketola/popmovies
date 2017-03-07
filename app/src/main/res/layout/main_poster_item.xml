@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -14,4 +14,15 @@
         android:src="@mipmap/ic_launcher"
         android:visibility="visible"
         />
-</LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_poster_overlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="@android:color/primary_text_dark"
+        android:background="#67050505"
+        android:textSize="@dimen/main_h1_size"
+        android:padding="@dimen/margin_a"
+        android:layout_gravity="top|left" />
+</FrameLayout>

@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <EditTextPreference
-        android:title="API key"
-        android:key="api_key"
-        android:summary="Insert your personal TMDB API Key, please"
+        android:title="@string/pref_api_key_title"
+        android:key="@string/pref_api_key_key"
+        android:summary="@string/pref_api_key_summary"
         android:defaultValue=""/>
-    <CheckBoxPreference
-        android:title="Save title space"
-        android:defaultValue="false"
-        android:key="title_in_action_bar"
-        android:summaryOff="Detail title shown in application area, as specified"
-        android:summaryOn="Detail title in Action Bar"
-        />
     <ListPreference
         android:defaultValue="@string/pref_num_columns_2"
         android:entries="@array/pref_num_columns_entries"
         android:entryValues="@array/pref_num_columns_values"
         android:key="@string/pref_num_columns_key"
-        android:title="@string/pref_num_columns"
+        android:title="@string/pref_num_columns" />
+    <CheckBoxPreference
+        android:title="@string/pref_title_in_bar_title"
+        android:defaultValue="@string/pref_title_in_bar_default"
+        android:key="@string/pref_title_in_bar_key"
+        android:summaryOff="@string/pref_title_in_bar_summary_off"
+        android:summaryOn="@string/pref_title_in_bar_summary_on" />
+    <CheckBoxPreference
+        android:title="@string/pref_poster_overlay_title"
+        android:defaultValue="false"
+        android:key="@string/pref_poster_overlay_key"
+        android:summaryOff="@string/pref_poster_overlay_summary_off"
+        android:summaryOn="@string/pref_poster_overlay_summary_on"
         />
 
 </PreferenceScreen>

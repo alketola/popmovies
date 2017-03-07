@@ -39,18 +39,24 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity implements PosterAdapter.PosterClickListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    // Settings
     public static String mApiKey = ""; // API key set in Settings by the user
-    private int mNumColumns = 4;
-    private int mScreenWidth = 320;
+    private int mNumColumns = 2;
+
+    // View Items
     PosterAdapter mPosterAdapter;
     ProgressBar mLoadingIndicator;
     TextView mErrorView;
-    DetailActivity detailActivity;
-    String mSearchMode;
     private GridLayoutManager mGridLayoutManager;
     private RecyclerView mMoviePosterGrid;
-
     private JSONArray mMovieData;
+    private int mScreenWidth;
+
+    // Reference to connected activities
+    DetailActivity detailActivity;
+
+    // internal mode
+    private String mSearchMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +65,6 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         detailActivity = new DetailActivity();
-
-        Context context = getApplicationContext();
 
         /* set up loading indicator */
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_tmdb_loading);
@@ -101,15 +105,15 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         return screenWidth;
     }
 
-    void readPreferences() {
+    private void readPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mApiKey = sharedPreferences.getString("api_key", "NO_API_KEY");
+        mApiKey = sharedPreferences.getString(getString(R.string.pref_api_key_key), "NO_API_KEY");
         String columnsString = sharedPreferences.getString(getString(R.string.pref_num_columns_key), getString(R.string.pref_num_columns_2));
         mNumColumns = Integer.valueOf(columnsString);
         mGridLayoutManager.setSpanCount(mNumColumns);
         int width = measureScreenWidth();
         mPosterAdapter.setPosterWidth(width / mNumColumns);
-        Log.d(TAG, "ReadPreferences():mApiKey=" + mApiKey + " mNumColumns:" + mNumColumns);
+        mPosterAdapter.setOverlay(sharedPreferences.getBoolean(getString(R.string.pref_poster_overlay_key), false));
     }
 
     @Override
@@ -209,6 +213,9 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
 
     }
 
+    // Side effects:
+    // mLoadingIndicator
+    // mPosterAdapter.setMovieData(movieData)
     public class FetchMovieDataTask extends AsyncTask<String, Void, JSONArray> {
 
         @Override
@@ -236,6 +243,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
                     pageNr = Integer.valueOf(pageString);
                 } catch (NumberFormatException e) {
                     Log.w(TAG, "Something wrong with the task parameter[1]:" + params[1]);
+                    pageNr = 1;
                 }
             }
 

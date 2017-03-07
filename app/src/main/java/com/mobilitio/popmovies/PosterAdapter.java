@@ -2,12 +2,14 @@ package com.mobilitio.popmovies;
 
 import android.content.Context;
 import android.net.Uri;
+import android.support.v4.util.SimpleArrayMap;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -30,7 +32,9 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
     private int mHowManyMovies;
     //    private ArrayList<String> mPosterImageNames; TODO REMOVE
     private JSONArray mMovieData;
+    private SimpleArrayMap<Integer, JSONArray> mMovieDataPages;
 
+    private boolean mOverlayOn = false;
 
     public PosterAdapter(int numberOfDisplayedMovies,
                          int posterWidth,
@@ -38,13 +42,25 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
         mHowManyMovies = numberOfDisplayedMovies;
         setPosterWidth(posterWidth);
         mPosterOnclickListener = posterOnClickListener;
+        mMovieDataPages = new SimpleArrayMap<Integer, JSONArray>(3);
     }
 
     private static String getPathBySetImageSize() {
         return getImageSizePathString(mPosterWidthPx);
     }
 
+    public void setOverlay(boolean on) {
+        mOverlayOn = on;
+    }
+
     public void setMovieData(JSONArray movieData) {
+        mMovieData = movieData;
+        mHowManyMovies = movieData.length();
+        notifyDataSetChanged();
+        Log.d(TAG, "setMovieData: mMovieData=" + mMovieData.toString());//.substring(0, 100)ad
+    }
+
+    public void setMovieData(JSONArray movieData, int page) {
         mMovieData = movieData;
         mHowManyMovies = movieData.length();
         notifyDataSetChanged();
@@ -61,10 +77,8 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
         int layoutIdForListItem = R.layout.main_poster_item;
         LayoutInflater inflater = LayoutInflater.from(context);
         boolean shouldAttachToParentImmediately = false;
-
         View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
         PosterViewHolder pvh = new PosterViewHolder(view);
-
         return pvh;
     }
 
@@ -91,6 +105,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
      ****/
     public class PosterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView imageView;
+        TextView overlayView;
         Context pvContext;
 
 
@@ -99,6 +114,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
             imageView = (ImageView) view.findViewById(R.id.iv_a_poster);
             imageView.setOnClickListener(this);
             pvContext = view.getContext();
+            overlayView = (TextView) view.findViewById(R.id.tv_poster_overlay);
         }
 
         @Override
@@ -135,6 +151,14 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
                         .placeholder(R.mipmap.ic_launcher)
                         .resize(mPosterWidthPx, mPosterWidthPx) // square
                         .into(imageView);
+                if (mOverlayOn) {
+                    String movieInfo = TmdbDigger.extractShortMovieInfo(position, mMovieData);
+
+                    overlayView.setText(String.valueOf(position + 1) + ". " + movieInfo);
+                    overlayView.setVisibility(View.VISIBLE);
+                } else {
+                    overlayView.setVisibility(View.INVISIBLE);
+                }
             } else {
                 Log.e(TAG, "imagefilename = null");
             }

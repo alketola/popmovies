@@ -220,6 +220,15 @@ public class TmdbDigger {
         return oneMovieData;
     }
 
+    // This is a hack
+    public static String extractShortMovieInfo(int position, JSONArray array) {
+        JSONObject movieData = extractOneMovieData(position, array);
+        String original_title = extractStringField("original_title", movieData);
+        float vote_average = extractDecimalField("vote_average", movieData);
+        //original_title = original_title.substring(0,10);
+        return " " + original_title + "  " + String.valueOf(vote_average);
+    }
+
     public static JSONObject oneMovieDataObjectFrom(String s) {
         JSONObject returned_object = null;
         try {

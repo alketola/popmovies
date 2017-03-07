@@ -9,4 +9,5 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
+    <color name="red">#ee0808</color>
 </resources>

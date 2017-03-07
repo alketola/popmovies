@@ -21,10 +21,26 @@
     <string name="search_my_favourites_title">PopMovies - My Favourites</string>
     <string name="movie_favorited_success_message">Movie added to favourites</string>
     <!-- Preferences -->
+    <!-- number of poster columns to show in the MainActivity -->
     <string name="pref_num_columns">Number of columns</string>
     <string name="pref_num_columns_1" translatable="false">1</string>
     <string name="pref_num_columns_2" translatable="false">2</string>
     <string name="pref_num_columns_3" translatable="false">3</string>
     <string name="pref_num_columns_4" translatable="false">4</string>
     <string name="pref_num_columns_key" translatable="false">pref_num_columns</string>
+    <!-- shall we raise and embed the movie title in action bar -->
+    <string name="pref_title_in_bar_title">Save screen space</string>
+    <string name="pref_title_in_bar_key" translatable="false">title_in_action_bar</string>
+    <string name="pref_title_in_bar_summary_off">Detail title shown in application area, as specified</string>
+    <string name="pref_title_in_bar_summary_on">Detail title in Action Bar</string>
+    <string name="pref_title_in_bar_default">false</string>
+    <!-- The Movie DB API KEY input prefrence -->
+    <string name="pref_api_key_title">API key</string>
+    <string name="pref_api_key_key" translatable="false">pref_api_key_key</string>
+    <string name="pref_api_key_summary">Your personal TMDB API Key is stored here</string>
+    <!-- shall we show a number overlay on each poster -->
+    <string name="pref_poster_overlay_title">Movie info overlay</string>
+    <string name="pref_poster_overlay_key" translatable="false">pref_poster_overlay_key</string>
+    <string name="pref_poster_overlay_summary_off">Not shown</string>
+    <string name="pref_poster_overlay_summary_on">Shown</string>
 </resources>
