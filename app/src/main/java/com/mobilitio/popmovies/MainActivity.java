@@ -2,12 +2,14 @@ package com.mobilitio.popmovies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -22,7 +24,6 @@ import android.widget.TextView;
 import com.mobilitio.popmovies.data.PopMoviesDbContract;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -37,9 +38,10 @@ import java.net.URL;
  */
 public class MainActivity extends AppCompatActivity implements PosterAdapter.PosterClickListener {
     private static final String TAG = MainActivity.class.getSimpleName();
-    // TODO INSERT API KEY TO THE STRING INITIALIZER BELOW
-    public static String mApiKey = "";
-    // TODO REMOVE API KEY BEFORE COMMIT
+
+    public static String mApiKey = ""; // API key set in Settings by the user
+    private int mNumColumns = 4;
+    private int mScreenWidth = 320;
     PosterAdapter mPosterAdapter;
     ProgressBar mLoadingIndicator;
     TextView mErrorView;
@@ -47,24 +49,18 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
     String mSearchMode;
     private GridLayoutManager mGridLayoutManager;
     private RecyclerView mMoviePosterGrid;
-    // TODO Make API KEY EMPTY BEFORE COMMIT
+
     private JSONArray mMovieData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int height = displaymetrics.heightPixels;
-        int width = displaymetrics.widthPixels;
-        int dpi = displaymetrics.densityDpi;
+        mScreenWidth = measureScreenWidth();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         detailActivity = new DetailActivity();
 
         Context context = getApplicationContext();
-
-
 
         /* set up loading indicator */
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_tmdb_loading);
@@ -76,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
 
         /* set up LayoutManager */
         int hor_or_ver = GridLayoutManager.VERTICAL;
-        int spanCount = 2;  //width / 92 ;// TODO Maybe should be calculated, 4 is OK too
+        int spanCount = mNumColumns;  //width / 92 ;// TODO Maybe should be calculated, 4 is OK too
         boolean reverseLayout = false;
         mGridLayoutManager = new GridLayoutManager(this, spanCount);//, hor_or_ver, reverseLayout);
         mMoviePosterGrid.setLayoutManager(mGridLayoutManager);
@@ -84,8 +80,9 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         /* set up Adapter */
 
         int posterWidth;
-        mPosterAdapter = new PosterAdapter(20, width / spanCount, this);
+        mPosterAdapter = new PosterAdapter(20, mScreenWidth / spanCount, this);
         mMoviePosterGrid.setAdapter(mPosterAdapter);
+        readPreferences();
 
         /* The search mode must be set at start */
         setSearchModePopular();
@@ -95,12 +92,40 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         showMainPosters();
     }
 
+    int measureScreenWidth() {
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+
+        int screenWidth = displaymetrics.widthPixels;
+
+        return screenWidth;
+    }
+
+    void readPreferences() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mApiKey = sharedPreferences.getString("api_key", "NO_API_KEY");
+        String columnsString = sharedPreferences.getString(getString(R.string.pref_num_columns_key), getString(R.string.pref_num_columns_2));
+        mNumColumns = Integer.valueOf(columnsString);
+        mGridLayoutManager.setSpanCount(mNumColumns);
+        int width = measureScreenWidth();
+        mPosterAdapter.setPosterWidth(width / mNumColumns);
+        Log.d(TAG, "ReadPreferences():mApiKey=" + mApiKey + " mNumColumns:" + mNumColumns);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.d(TAG, "onRestart()");
+        readPreferences();
+
+        Log.d(TAG, "onRestart(), mApiKey=>" + mApiKey);
         loadMovieData(1);
     }
+
 
     /* Pump up the menu */
     @Override
@@ -120,20 +145,25 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
                 Log.v(TAG, "Most Popular Search Mode Selected");
                 setSearchModePopular();
                 loadMovieData(1);
-                break;
+                return true;
+
             case R.id.mi_top_rated:
                 Log.v(TAG, "Top Rated Search Mode Selected");
                 setSearchModeTopRated();
                 loadMovieData(1);
-                break;
+                return true;
+
             case R.id.mi_favourites:
                 Log.v(TAG, "Favourites");
                 setSearchModeFavourites();
                 loadMovieData(1);
-                break;
-//            case R.id.mi_settings:
-//                Log.v(TAG,"SETTINGS selected");
-//                break;
+                return true;
+
+            case R.id.mi_settings:
+                Log.v(TAG, "SETTINGS selected");
+                Intent goToSettings = new Intent(this, SettingsActivity.class);
+                startActivity(goToSettings);
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -265,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
                 mPosterAdapter.setMovieData(movieData);
                 showMainPosters();
             } else {
-                Log.i(TAG,"Movie data not available");
+                Log.i(TAG, "Movie data not available");
                 showMainError();
             }
         }

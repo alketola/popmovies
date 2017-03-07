@@ -19,5 +19,12 @@
     <string name="favourite_title">Favourite</string>
     <string name="search_my_favourites">search_mode_favourites</string>
     <string name="search_my_favourites_title">PopMovies - My Favourites</string>
-    <string name="movie_favorited_success_message">Movie added to favourites, id</string>
+    <string name="movie_favorited_success_message">Movie added to favourites</string>
+    <!-- Preferences -->
+    <string name="pref_num_columns">Number of columns</string>
+    <string name="pref_num_columns_1" translatable="false">1</string>
+    <string name="pref_num_columns_2" translatable="false">2</string>
+    <string name="pref_num_columns_3" translatable="false">3</string>
+    <string name="pref_num_columns_4" translatable="false">4</string>
+    <string name="pref_num_columns_key" translatable="false">pref_num_columns</string>
 </resources>

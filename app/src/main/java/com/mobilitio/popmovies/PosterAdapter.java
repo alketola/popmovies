@@ -36,7 +36,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
                          int posterWidth,
                          PosterClickListener posterOnClickListener) {
         mHowManyMovies = numberOfDisplayedMovies;
-        mPosterWidthPx = posterWidth;
+        setPosterWidth(posterWidth);
         mPosterOnclickListener = posterOnClickListener;
     }
 
@@ -51,6 +51,10 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
         Log.d(TAG, "setMovieData: mMovieData=" + mMovieData.toString());//.substring(0, 100)ad
     }
 
+    public void setPosterWidth(int px) {
+        mPosterWidthPx = px;
+    }
+
     @Override
     public PosterViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         Context context = viewGroup.getContext();
@@ -60,7 +64,6 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
 
         View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
         PosterViewHolder pvh = new PosterViewHolder(view);
-
 
         return pvh;
     }

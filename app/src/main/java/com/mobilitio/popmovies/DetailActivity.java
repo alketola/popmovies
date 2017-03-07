@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -172,12 +174,22 @@ public class DetailActivity extends AppCompatActivity {
             imageSize = (int) (screenWidth * IMAGE_SIZE_FRACTION_PORTRAIT);
         }
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean titleInActionBar = sharedPreferences.getBoolean("title_in_action_bar", false);
+        Log.d(TAG, "onCreate(), title_in_action_bar=>" + titleInActionBar);
         // Now, extract elements to UI, storing them to mOdule variables
         // and putting them to UI views
         mMovieTitle = TmdbDigger.extractStringField(getString(R.string.tmdb_res_original_title), jsonObject);
-
         TextView tv_movie_title = (TextView) findViewById(R.id.tv_movie_title);
-        tv_movie_title.setText(mMovieTitle);
+
+        if (titleInActionBar) {
+            tv_movie_title.setTextSize(0.0f);
+            String myTitle = getTitle() + " - " + mMovieTitle;
+            setTitle(myTitle);
+        } else {
+
+            tv_movie_title.setText(mMovieTitle);
+        }
         //        setTitle(mMovieTitle);
         // I would prefer putting movie title to app title to save screen real estate
         // But specs are specs ;-)

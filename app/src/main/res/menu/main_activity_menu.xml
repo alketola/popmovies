@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/mi_most_popular"
         android:orderInCategory="1"
@@ -12,12 +13,11 @@
         android:id="@+id/mi_favourites"
         android:orderInCategory="3"
         android:title="@string/mi_favourites" />
-    <!--<item
-        android:orderInCategory="4"
-        android:title="" />
+
     <item
         android:id="@+id/mi_settings"
         android:orderInCategory="4"
-        android:title="@string/mi_settings" />
-        -->
+        android:title="@string/mi_settings"
+        app:showAsAction="never" />
+
 </menu>
