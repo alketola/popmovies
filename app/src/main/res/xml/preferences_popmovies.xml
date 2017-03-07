@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <EditTextPreference
+        android:title="API key"
+        android:key="api_key"
+        android:summary="Insert your personal TMDB API Key, please"
+        android:defaultValue=""/>
+    <CheckBoxPreference
+        android:title="Save title space"
+        android:defaultValue="false"
+        android:key="title_in_action_bar"
+        android:summaryOff="Detail title shown in application area, as specified"
+        android:summaryOn="Detail title in Action Bar"
+        />
+    <ListPreference
+        android:defaultValue="@string/pref_num_columns_2"
+        android:entries="@array/pref_num_columns_entries"
+        android:entryValues="@array/pref_num_columns_values"
+        android:key="@string/pref_num_columns_key"
+        android:title="@string/pref_num_columns"
+        />
+
+</PreferenceScreen>

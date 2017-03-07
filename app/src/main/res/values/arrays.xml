@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="pref_num_columns_entries">
+        <item>@string/pref_num_columns_1</item>
+        <item>@string/pref_num_columns_2</item>
+        <item>@string/pref_num_columns_3</item>
+        <item>@string/pref_num_columns_4</item>
+    </array>
+    <array name="pref_num_columns_values">
+        <item>@string/pref_num_columns_1</item>
+        <item>@string/pref_num_columns_2</item>
+        <item>@string/pref_num_columns_3</item>
+        <item>@string/pref_num_columns_4</item>
+    </array>
+</resources>
