@@ -133,7 +133,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
         }
 
         public void bind(int position) {
-            Log.d(TAG, "bind: position=" + position);
+            //Log.d(TAG, "bind: position=" + position);
             Context context = pvContext;
             // if an android is needed, do imageView.setImageResource(R.mipmap.ic_launcher);
             JSONObject movie = null;

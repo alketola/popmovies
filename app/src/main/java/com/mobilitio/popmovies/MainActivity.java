@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
     private RecyclerView mMoviePosterGrid;
     private JSONArray mMovieData;
     private int mScreenWidth;
-
+    public final int ADAPTER_IMAGE_COUNT = 100;
     // Reference to connected activities
     DetailActivity detailActivity;
 
@@ -84,7 +84,8 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         /* set up Adapter */
 
         int posterWidth;
-        mPosterAdapter = new PosterAdapter(20, mScreenWidth / spanCount, this);
+
+        mPosterAdapter = new PosterAdapter(ADAPTER_IMAGE_COUNT, mScreenWidth / spanCount, this);
         mMoviePosterGrid.setAdapter(mPosterAdapter);
         readPreferences();
 
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         setSearchModePopular();
 
         /* load movie data from tmdb */
-        loadMovieData(1);
+        loadMovieData(ADAPTER_IMAGE_COUNT);
         showMainPosters();
     }
 
@@ -127,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         readPreferences();
 
         Log.d(TAG, "onRestart(), mApiKey=>" + mApiKey);
-        loadMovieData(1);
+        loadMovieData(ADAPTER_IMAGE_COUNT);
     }
 
 
@@ -148,13 +149,13 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
             case R.id.mi_most_popular:
                 Log.v(TAG, "Most Popular Search Mode Selected");
                 setSearchModePopular();
-                loadMovieData(1);
+                loadMovieData(ADAPTER_IMAGE_COUNT);
                 return true;
 
             case R.id.mi_top_rated:
                 Log.v(TAG, "Top Rated Search Mode Selected");
                 setSearchModeTopRated();
-                loadMovieData(1);
+                loadMovieData(ADAPTER_IMAGE_COUNT);
                 return true;
 
             case R.id.mi_favourites:
@@ -235,15 +236,15 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
 
             String movieSearchMode = params[0];//Not pretty but works
 
-            String pageString = "1";
-            int pageNr = 1;
+            String requestedMovieCountString = "0";
+            int requestedMovieCount = 1;
             if (params[1] != null) {
-                pageString = params[1];
+                requestedMovieCountString = params[1];
                 try {
-                    pageNr = Integer.valueOf(pageString);
+                    requestedMovieCount = Integer.valueOf(requestedMovieCountString);
                 } catch (NumberFormatException e) {
                     Log.w(TAG, "Something wrong with the task parameter[1]:" + params[1]);
-                    pageNr = 1;
+                    requestedMovieCount = 1;
                 }
             }
 
@@ -266,31 +267,58 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
                 return tmdbData; // To make things later easier a JSONArray must be returned
 
             }
+            int movieCount = 0;
+            int tmdbRequestPageNr = 1;
 
-            // Here we go with the 'ordinary' TMDB query
-            Uri movieRequestUri = TmdbUriUtil.buildMovieListUri(getApplicationContext(),
-                    movieSearchMode, mApiKey, pageNr);
+            tmdbData = new JSONArray();
+            while (movieCount < requestedMovieCount) {
+                // Here we go with the 'ordinary' TMDB query
+                Uri movieRequestUri = TmdbUriUtil.buildMovieListUri(getApplicationContext(),
+                        movieSearchMode, mApiKey, tmdbRequestPageNr);
 
-            try {
-                movieRequestURL = new URL(movieRequestUri.toString());
-            } catch (MalformedURLException e) {
-                Log.e(TAG, "The Uri had eaten something bad" + movieRequestUri.toString());
-                e.printStackTrace();
-            }
+                try {
+                    movieRequestURL = new URL(movieRequestUri.toString());
+                } catch (MalformedURLException e) {
+                    Log.e(TAG, "The Uri had eaten something bad" + movieRequestUri.toString());
+                    e.printStackTrace();
+                }
 
-            try {
-                String jsonTMDBResponse = TmdbDigger
-                        .getResponseFromHttpUrl(movieRequestURL);
-                Log.v(TAG, "jsonTMDBResponse=" + jsonTMDBResponse.substring(0, 100));
-                tmdbData = TmdbDigger
-                        .extractJSONArray(MainActivity.this, jsonTMDBResponse);
-            } catch (MalformedURLException mfue) {
-                Log.w(TAG, "MalformedURLException, url=" + movieRequestURL.toString());
-            } catch (IOException ioex) {
-                Log.w(TAG, "IOException:" + ioex.toString() + " url=" + movieRequestURL.toString());
-            } catch (Exception e) {
-                Log.e(TAG, "Exeptional Exception.");
-                e.printStackTrace();
+                JSONArray jsonResultsArray = null; // here we'll get a batch of movie data
+                try {
+                    String jsonTMDBResponse = TmdbDigger
+                            .getResponseFromHttpUrl(movieRequestURL);
+                    Log.v(TAG, "jsonTMDBResponse=" + jsonTMDBResponse.substring(0, 100));
+
+                    jsonResultsArray = TmdbDigger.extractJSONArray(MainActivity.this, jsonTMDBResponse);
+                } catch (MalformedURLException mfue) {
+                    Log.w(TAG, "MalformedURLException, url=" + movieRequestURL.toString());
+                    jsonResultsArray = null;
+                } catch (IOException ioex) {
+                    Log.w(TAG, "IOException:" + ioex.toString() + " url=" + movieRequestURL.toString());
+                    jsonResultsArray = null;
+                } catch (Exception e) {
+                    Log.e(TAG, "Exeptional Exception.");
+                    e.printStackTrace();
+                    jsonResultsArray = null;
+                } finally {
+                    tmdbRequestPageNr++;
+                }
+
+                int lastResultLength = 0;
+                if (jsonResultsArray != null) {
+                    lastResultLength = jsonResultsArray.length();
+                }
+
+                for (int i = 0; i < lastResultLength; i++) {
+                    JSONObject jsonObject = jsonResultsArray.optJSONObject(i);
+                    if (jsonObject != null) {
+                        tmdbData.put(jsonObject);
+                        movieCount++;
+                    }
+                    if (movieCount >= requestedMovieCount) {
+                        break;
+                    }
+                }
             }
             return tmdbData;
         }
