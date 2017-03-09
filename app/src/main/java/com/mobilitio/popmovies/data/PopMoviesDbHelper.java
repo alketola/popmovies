@@ -32,7 +32,7 @@ public class PopMoviesDbHelper extends SQLiteOpenHelper {
                 PopMoviesDbContract.MovieEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL," +
                 PopMoviesDbContract.MovieEntry.COLUMN_TITLE + " TEXT" +
                 ");";
-        Log.d("PopMDbHelperCrea", DB_CREATION_SQL);
+        Log.v("PopMDbHelperCrea", DB_CREATION_SQL);
         sqLiteDatabase.execSQL(DB_CREATION_SQL);
     }
 

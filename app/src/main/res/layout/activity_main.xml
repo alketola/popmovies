@@ -34,7 +34,7 @@
         android:layout_gravity="center"
         android:visibility="invisible" />
 
-    <EditText
+    <TextView
         android:id="@+id/tv_error"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -45,7 +45,8 @@
         android:padding="@dimen/margin_a"
         android:text="@string/loading_error"
         android:textAlignment="center"
-        android:textSize="@dimen/main_error_text_size" />
+        android:textSize="@dimen/main_error_text_size"
+        android:editable="false" />
 
     <TextView
         android:id="@+id/tv_auth_error"

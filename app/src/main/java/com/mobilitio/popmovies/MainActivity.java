@@ -92,6 +92,14 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         /* set up loading indicator */
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_tmdb_loading);
         mErrorView = (TextView) findViewById(R.id.tv_error);
+        mErrorView.setFocusable(false);
+
+        mErrorView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadMovieData();
+            }
+        });
 
         /* set up RecyclerView */
         mMoviePosterGrid = (RecyclerView) findViewById(R.id.rv_movie_posters);
@@ -113,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         readPreferences();
 
         /* load movie data from tmdb */
-        loadMovieData(ADAPTER_IMAGE_COUNT);
+        loadMovieData();
         showMainPosters();
     }
 
@@ -128,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
 
         readPreferences();
 
-        loadMovieData(ADAPTER_IMAGE_COUNT);
+        loadMovieData();
     }
 
     @Override
@@ -177,19 +185,19 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
             case R.id.mi_most_popular:
                 Log.v(TAG, "Most Popular Search Mode Selected");
                 setSearchMode(item_rid);
-                loadMovieData(ADAPTER_IMAGE_COUNT);
+                loadMovieData();
                 return true;
 
             case R.id.mi_top_rated:
                 Log.v(TAG, "Top Rated Search Mode Selected");
                 setSearchMode(item_rid);
-                loadMovieData(ADAPTER_IMAGE_COUNT);
+                loadMovieData();
                 return true;
 
             case R.id.mi_favourites:
                 Log.v(TAG, "Favourites");
                 setSearchMode(item_rid);
-                loadMovieData(ADAPTER_IMAGE_COUNT);
+                loadMovieData();
                 return true;
 
             case R.id.mi_settings:
@@ -245,6 +253,10 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
     public void loadMovieData(int numberOfMovies) {
 
         new FetchMovieDataTask().execute(getSearchModeString(mSearchMode), Integer.toString(numberOfMovies));
+    }
+
+    public void loadMovieData() {
+        loadMovieData(ADAPTER_IMAGE_COUNT);
     }
 
     private void showMainPosters() {

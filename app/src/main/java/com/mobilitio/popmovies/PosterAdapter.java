@@ -17,6 +17,7 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import static android.support.v7.widget.RecyclerView.NO_POSITION;
 import static com.mobilitio.popmovies.TmdbDigger.extractOneMovieData;
 import static com.mobilitio.popmovies.TmdbUriUtil.buildImageUri;
 import static com.mobilitio.popmovies.TmdbUriUtil.getImageSizePathString;
@@ -116,13 +117,16 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
             Log.v(TAG, "onClick");
             Context context = v.getContext();
             int adapterPosition = getAdapterPosition();
-
-            String imagefile = new String();
-
+            if (adapterPosition == (NO_POSITION)) {
+                Log.d(TAG, "ViewHolder at NO_POSITION; not ready yet");
+                return;
+            }
+            if (mMovieData == null) return;
             JSONObject dataToDetailActivity = extractOneMovieData(adapterPosition, mMovieData);
-
-            String dataString;
-            dataString = dataToDetailActivity.toString();
+            if (dataToDetailActivity == null) {
+                Log.w(TAG, "Data not ready for details (null)");
+                return;
+            }
             mPosterOnclickListener.onPosterClick(adapterPosition, dataToDetailActivity);
         }
 
@@ -143,7 +147,8 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
                 Uri uri = buildImageUri(context, imagefilename, getImageSizePathString(mPosterWidthPx));
                 Picasso.with(pvContext)
                         .load(uri.toString())
-                        //.placeholder(R.mipmap.ic_launcher)
+                        .placeholder(R.drawable.squarepivot92)
+                        .error(R.drawable.squarepivot92red)
                         .resize(mPosterWidthPx, mPosterWidthPx) // square
                         .into(imageView);
                 if (mOverlayOn) {

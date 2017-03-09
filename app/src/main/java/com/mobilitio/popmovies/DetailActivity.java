@@ -203,7 +203,7 @@ public class DetailActivity extends AppCompatActivity {
         mImageURIString = TmdbUriUtil.buildImageUri(this, mShortImageUriString, sizePath).toString();
         Picasso.with(context)
                 .load(mImageURIString)
-                .placeholder(R.mipmap.ic_launcher)
+                .placeholder(R.drawable.squarepivot92)
                 .resize(imageSize, imageSize) // square
                 .into(mDetailIv);
 
@@ -338,6 +338,7 @@ public class DetailActivity extends AppCompatActivity {
         if (cursor.getCount() > 0) {
             exists = true;
         }
+        cursor.close();
 
         return exists;
     }
@@ -406,9 +407,11 @@ public class DetailActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String jsonString) {
+            if (jsonString == null) return;
             super.onPostExecute(jsonString);
             Context context = getApplicationContext();
             JSONArray jsonArray = TmdbDigger.extractJSONArray(context, jsonString);
+            if (jsonArray == null) return;
             int length = TmdbDigger.getArrayLength(jsonArray);
             LinearLayout videoList = (LinearLayout) findViewById(R.id.video_list);
 
@@ -470,7 +473,7 @@ public class DetailActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String jsonString) {
             super.onPostExecute(jsonString);
-            if (jsonString.length() == 0) return;
+            if (jsonString == null) return;
             Context context = getApplicationContext();
             JSONArray jsonArray = TmdbDigger.extractJSONArray(context, jsonString);
             if (jsonArray == null) return;
