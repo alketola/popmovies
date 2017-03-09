@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.support.v4.util.SimpleArrayMap;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,14 +58,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
         mMovieData = movieData;
         mHowManyMovies = movieData.length();
         notifyDataSetChanged();
-        Log.d(TAG, "setMovieData: mMovieData=" + mMovieData.toString());//.substring(0, 100)ad
-    }
-
-    public void setMovieData(JSONArray movieData, int page) {
-        mMovieData = movieData;
-        mHowManyMovies = movieData.length();
-        notifyDataSetChanged();
-        Log.d(TAG, "setMovieData: mMovieData=" + mMovieData.toString());//.substring(0, 100)ad
+        // JUST TOO MUCH PRINT Log.d(TAG, "setMovieData: mMovieData=" + mMovieData.toString());//.substring(0, 100)ad
     }
 
     public void setPosterWidth(int px) {
@@ -107,7 +101,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
         ImageView imageView;
         TextView overlayView;
         Context pvContext;
-
+        private final static int TEXT_SIZE_FRACTION_OF_POSTER = 10;
 
         public PosterViewHolder(View view) {
             super(view);
@@ -148,12 +142,12 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
                 Uri uri = buildImageUri(context, imagefilename, getImageSizePathString(mPosterWidthPx));
                 Picasso.with(pvContext)
                         .load(uri.toString())
-                        .placeholder(R.mipmap.ic_launcher)
+                        //.placeholder(R.mipmap.ic_launcher)
                         .resize(mPosterWidthPx, mPosterWidthPx) // square
                         .into(imageView);
                 if (mOverlayOn) {
                     String movieInfo = TmdbDigger.extractShortMovieInfo(position, mMovieData);
-
+                    overlayView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mPosterWidthPx / TEXT_SIZE_FRACTION_OF_POSTER);
                     overlayView.setText(String.valueOf(position + 1) + ". " + movieInfo);
                     overlayView.setVisibility(View.VISIBLE);
                 } else {

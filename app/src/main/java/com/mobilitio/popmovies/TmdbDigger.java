@@ -186,6 +186,9 @@ public class TmdbDigger {
         return postername;
     }
 
+    // One Hackish Thing Remains in the static field extractors:
+    // The Context is not passed, thus Strings are not Resourced
+    //
     public static String extractPosterName(JSONObject jsonObject) {
         String postername = new String();
         try {
@@ -220,7 +223,7 @@ public class TmdbDigger {
         return oneMovieData;
     }
 
-    // This is a hack
+
     public static String extractShortMovieInfo(int position, JSONArray array) {
         JSONObject movieData = extractOneMovieData(position, array);
         String original_title = extractStringField("original_title", movieData);

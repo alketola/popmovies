@@ -309,8 +309,7 @@ public class DetailActivity extends AppCompatActivity {
         Uri uri = getContentResolver().insert(PopMoviesDbContract.MovieEntry.CONTENT_URI, movieDataCV);
         if (uri != null) {
             Toast.makeText(getBaseContext(),
-                    getString(R.string.movie_favorited_success_message)
-                            + " " + mMovieId, Toast.LENGTH_LONG).show();
+                    getString(R.string.movie_favorited_success_message), Toast.LENGTH_LONG).show();
         }
     }
 

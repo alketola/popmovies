@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.mobilitio.popmovies.data.PopMoviesDbContract;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
 
     // Settings
     public static String mApiKey = ""; // API key set in Settings by the user
+    private static String mSearchModeString;
     private int mNumColumns = 2;
 
     // View Items
@@ -49,20 +51,40 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
     TextView mErrorView;
     private GridLayoutManager mGridLayoutManager;
     private RecyclerView mMoviePosterGrid;
-    private JSONArray mMovieData;
+
     private int mScreenWidth;
     public final int ADAPTER_IMAGE_COUNT = 100;
     // Reference to connected activities
     DetailActivity detailActivity;
 
     // internal mode
-    private String mSearchMode;
+    private final String SAVED_SEARCH_MODE = "saved_search_mode";
+    private int mSearchMode;
+    // persisted movie data
+    private final String SAVED_MOVIE_DATA = "saved_movie_data";
+    JSONArray mTmdbData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mScreenWidth = measureScreenWidth();
-
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            int searchMode = savedInstanceState.getInt(SAVED_SEARCH_MODE, R.id.mi_most_popular);
+            setSearchMode(searchMode);
+            String jsonString = (String) savedInstanceState.get(SAVED_MOVIE_DATA);
+            if (jsonString != null) {
+                try {
+                    mTmdbData = new JSONArray(jsonString);
+                } catch (JSONException e) {
+                    mTmdbData = null;
+                }
+            }
+        } else {
+            setSearchMode(R.id.mi_most_popular);
+            mTmdbData = null;
+        }
+
+        mScreenWidth = measureScreenWidth();
         setContentView(R.layout.activity_main);
         detailActivity = new DetailActivity();
 
@@ -89,13 +111,33 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         mMoviePosterGrid.setAdapter(mPosterAdapter);
         readPreferences();
 
-        /* The search mode must be set at start */
-        setSearchModePopular();
-
         /* load movie data from tmdb */
         loadMovieData(ADAPTER_IMAGE_COUNT);
         showMainPosters();
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        readPreferences();
+
+        loadMovieData(ADAPTER_IMAGE_COUNT);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(SAVED_SEARCH_MODE, getSearchMode());
+        Log.d(TAG, "onSaveInstanceState saved search mode:" + getSearchMode());
+        outState.putString(SAVED_MOVIE_DATA, mTmdbData.toString());
+        super.onSaveInstanceState(outState);
+    }
+
 
     int measureScreenWidth() {
         DisplayMetrics displaymetrics = new DisplayMetrics();
@@ -117,21 +159,6 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         mPosterAdapter.setOverlay(sharedPreferences.getBoolean(getString(R.string.pref_poster_overlay_key), false));
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        readPreferences();
-
-        Log.d(TAG, "onRestart(), mApiKey=>" + mApiKey);
-        loadMovieData(ADAPTER_IMAGE_COUNT);
-    }
-
-
     /* Pump up the menu */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -148,20 +175,20 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         switch (item_rid) {
             case R.id.mi_most_popular:
                 Log.v(TAG, "Most Popular Search Mode Selected");
-                setSearchModePopular();
+                setSearchMode(item_rid);
                 loadMovieData(ADAPTER_IMAGE_COUNT);
                 return true;
 
             case R.id.mi_top_rated:
                 Log.v(TAG, "Top Rated Search Mode Selected");
-                setSearchModeTopRated();
+                setSearchMode(item_rid);
                 loadMovieData(ADAPTER_IMAGE_COUNT);
                 return true;
 
             case R.id.mi_favourites:
                 Log.v(TAG, "Favourites");
-                setSearchModeFavourites();
-                loadMovieData(1);
+                setSearchMode(item_rid);
+                loadMovieData(ADAPTER_IMAGE_COUNT);
                 return true;
 
             case R.id.mi_settings:
@@ -184,23 +211,39 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         startActivity(intent);
     }
 
-    private void setSearchModeTopRated() {
-        mSearchMode = getString(R.string.tmdb_api_top);
-        setTitle(getString(R.string.main_title_top_rated));
+    private void setSearchMode(int searchModeResourceId) {
+        mSearchMode = searchModeResourceId;
+        switch (searchModeResourceId) {
+            case R.id.mi_most_popular:
+                mSearchModeString = getString(R.string.tmdb_api_popular);
+                setTitle(getString(R.string.main_title_most_popular));
+                break;
+            case R.id.mi_top_rated:
+                mSearchModeString = getString(R.string.tmdb_api_top);
+                setTitle(getString(R.string.main_title_top_rated));
+                break;
+            case R.id.mi_favourites:
+                mSearchModeString = getString(R.string.search_my_favourites);
+                setTitle(getString(R.string.search_my_favourites_title));
+                break;
+            default:
+                mSearchModeString = getString(R.string.tmdb_api_popular);
+                mSearchMode = R.id.mi_most_popular;
+                setTitle(getString(R.string.main_title_most_popular));
+        }
     }
 
-    private void setSearchModePopular() {
-        mSearchMode = getString(R.string.tmdb_api_popular);
-        setTitle(getString(R.string.main_title_most_popular));
+    private static String getSearchModeString(int mSearchMode) {
+        return mSearchModeString;
     }
 
-    private void setSearchModeFavourites() {
-        mSearchMode = getString(R.string.search_my_favourites);
-        setTitle(getString(R.string.search_my_favourites_title));
+    private int getSearchMode() {
+        return mSearchMode;
     }
 
     public void loadMovieData(int page) {
-        new FetchMovieDataTask().execute(mSearchMode, Integer.toString(page));
+
+        new FetchMovieDataTask().execute(getSearchModeString(mSearchMode), Integer.toString(page));
     }
 
     private void showMainPosters() {
@@ -234,8 +277,10 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
                 return null;
             }
 
-            String movieSearchMode = params[0];//Not pretty but works
+            String movieSearchMode = params[0];
+            ;//Not pretty but works
 
+            if (movieSearchMode.equals(null)) return null;
             String requestedMovieCountString = "0";
             int requestedMovieCount = 1;
             if (params[1] != null) {
@@ -248,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
                 }
             }
 
-            // Instead of any net query, query our own content provider
+            // FAVOURITES. Instead of any net query, query our own content provider
             if (movieSearchMode.equals(getString(R.string.search_my_favourites))) {
 
                 Uri uri = PopMoviesDbContract.BASE_CONTENT_URI.buildUpon()
@@ -260,17 +305,20 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
                 } catch (Exception e) {
 
                 }
+
                 if (favDbCursor != null) {
                     tmdbData = readTmdbDataFromFavDB(getApplicationContext(), favDbCursor);
                 }
+                // To make things easier in onPostExecute a JSONArray must be returned
+                return tmdbData;
 
-                return tmdbData; // To make things later easier a JSONArray must be returned
 
             }
             int movieCount = 0;
             int tmdbRequestPageNr = 1;
-
-            tmdbData = new JSONArray();
+            if (tmdbData == null) {
+                tmdbData = new JSONArray();
+            }
             while (movieCount < requestedMovieCount) {
                 // Here we go with the 'ordinary' TMDB query
                 Uri movieRequestUri = TmdbUriUtil.buildMovieListUri(getApplicationContext(),
@@ -287,7 +335,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
                 try {
                     String jsonTMDBResponse = TmdbDigger
                             .getResponseFromHttpUrl(movieRequestURL);
-                    Log.v(TAG, "jsonTMDBResponse=" + jsonTMDBResponse.substring(0, 100));
+                    //Log.v(TAG, "jsonTMDBResponse=" + jsonTMDBResponse.substring(0, 100));
 
                     jsonResultsArray = TmdbDigger.extractJSONArray(MainActivity.this, jsonTMDBResponse);
                 } catch (MalformedURLException mfue) {
@@ -327,6 +375,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         protected void onPostExecute(JSONArray movieData) {
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (movieData != null) {
+                mTmdbData = movieData;
 //                Log.v(TAG,"onPostExecute movieData="+movieData.toString().substring(0,100));
                 mPosterAdapter.setMovieData(movieData);
                 showMainPosters();
