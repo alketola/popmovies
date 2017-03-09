@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
@@ -421,5 +422,22 @@ public class TmdbDigger {
                 cursor, json);
         return json;
 
+    }
+
+    public static URL getVideoURL(Context context, JSONArray jsonArray, int i) {
+        String videoKey = TmdbDigger.extractKey(context, jsonArray, i);
+        URL url = null;
+        try {
+            url = new URL(TmdbUriUtil.buildYouTubeURL(context, videoKey).toString());
+        } catch (MalformedURLException e) {
+            return null;
+        }
+        return url;
+    }
+
+    public static String getVideoName(Context context, JSONArray jsonArray, int i) {
+        JSONObject jsonObject = TmdbDigger.extractOneMovieData(i, jsonArray);
+        String videoName = TmdbDigger.extractStringField("name", jsonObject);
+        return videoName;
     }
 }

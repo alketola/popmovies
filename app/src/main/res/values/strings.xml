@@ -43,4 +43,6 @@
     <string name="pref_poster_overlay_key" translatable="false">pref_poster_overlay_key</string>
     <string name="pref_poster_overlay_summary_off">Not shown</string>
     <string name="pref_poster_overlay_summary_on">Shown</string>
+    <string name="share_title">Share</string>
+    <string name="sharing_message">Sharing you a video</string>
 </resources>

@@ -1,6 +1,5 @@
 package com.mobilitio.popmovies;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -14,9 +13,11 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.AppCompatCheckBox;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -44,6 +45,7 @@ import java.util.List;
 
 import static com.mobilitio.popmovies.TmdbDigger.extractDecimalField;
 import static com.mobilitio.popmovies.TmdbDigger.extractStringField;
+import static com.mobilitio.popmovies.TmdbDigger.getVideoName;
 
 /**
  * Created by antti on 26/01/17.
@@ -51,6 +53,8 @@ import static com.mobilitio.popmovies.TmdbDigger.extractStringField;
 
 public class DetailActivity extends AppCompatActivity {
     private static final String TAG = DetailActivity.class.getSimpleName();
+    private URL mVideoURLToShare;
+    private String mVideoNameToShare;
 
     private class VideoData {
         public String name;
@@ -115,6 +119,7 @@ public class DetailActivity extends AppCompatActivity {
     float mRatingFloat;
     String mReleaseDate;
     boolean mFavouriteOn;
+    ShareActionProvider mShareActionProvider; // for sharing youtube link
     VideoButtonAdapter mVideoListAdapter;
 
     String mShortImageUriString = new String();
@@ -255,6 +260,51 @@ public class DetailActivity extends AppCompatActivity {
     } // end onCreate
 
 
+    // Options menu for sharing
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.detail_activity_menu, menu);
+        Log.d(TAG, "onCreateOptionsMenu");
+        MenuItem shareItem = menu.findItem(R.id.menu_item_share);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+        URL defaultURL = null;
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int item_rid = item.getItemId();
+        switch (item_rid) {
+            case R.id.menu_item_share:
+                setUrlToShare(mVideoURLToShare);
+                Log.v(TAG, "Option" + "URL to share = " + mVideoURLToShare.toString());
+                break;
+            default:
+                Log.w(TAG, "Selected menu ID:" + item_rid);
+        }
+        return true;
+    }
+
+    private void setUrlToShare(URL url) {
+        if (mShareActionProvider != null) {
+            Log.v(TAG, "URL to share = " + url.toString());
+            mShareActionProvider.setShareIntent(createShareIntent(url));
+        }
+    }
+
+    private Intent createShareIntent(URL url) {
+        Intent myShareIntent = new Intent(Intent.ACTION_SEND);
+        myShareIntent.setType("video/*");
+        myShareIntent.putExtra(Intent.EXTRA_TEXT, url.toString());
+        String sharingSubject = getString(R.string.sharing_message) +
+                " : " + mMovieTitle + " / " + mVideoNameToShare + "|" + getString(R.string.app_name);
+        myShareIntent.putExtra(Intent.EXTRA_SUBJECT, sharingSubject);
+        return myShareIntent;
+    }
+
+    // Favouriting
+
     private void saveFavourite(boolean favourite) {
         Context context = getApplicationContext();
         if (favourite) {
@@ -278,12 +328,8 @@ public class DetailActivity extends AppCompatActivity {
         favouriteCheckBox.setChecked(isFavourite);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause");
-    }
 
+    // The database access
     private boolean movieIsInDB(int movieId) {
         boolean exists = false;
         String movieIdString = String.valueOf(mMovieId);
@@ -323,17 +369,7 @@ public class DetailActivity extends AppCompatActivity {
         Log.d(TAG, "deleted movie id=" + mMovieId + " deleted count=" + deletedCount);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-    /*
+    /* AsyncTask to load movie trailer video links
      * Returns JSONObject that contains JSONArray in "result" tuple.
      */
     private class FetchMovieVideosTask extends AsyncTask<Integer, Void, String> {
@@ -357,7 +393,7 @@ public class DetailActivity extends AppCompatActivity {
 
             try {
                 jsonTMDBResponse = TmdbDigger.getResponseFromHttpUrl(videoListURL);
-                Log.v(TAG, "Fetch video data Response=" + jsonTMDBResponse.substring(0, 100));
+                //Log.v(TAG, "Fetch video data Response=" + jsonTMDBResponse.substring(0, 100));
 
             } catch (Exception e) {
                 Log.e(TAG, "Problems with response from URL:" + videoListURL);
@@ -375,12 +411,20 @@ public class DetailActivity extends AppCompatActivity {
             JSONArray jsonArray = TmdbDigger.extractJSONArray(context, jsonString);
             int length = TmdbDigger.getArrayLength(jsonArray);
             LinearLayout videoList = (LinearLayout) findViewById(R.id.video_list);
+
+            mVideoURLToShare = TmdbDigger.getVideoURL(context, jsonArray, 0);
+            mVideoNameToShare = TmdbDigger.getVideoName(context, jsonArray, 0);
+            setUrlToShare(mVideoURLToShare);
             for (int i = 0; i < length; i++) {
-                String videoKey = TmdbDigger.extractKey(context, jsonArray, i);
-                URL url = TmdbUriUtil.buildYouTubeURL(context, videoKey);
-                JSONObject jsonObject = TmdbDigger.extractOneMovieData(i, jsonArray);
-                String videoName = TmdbDigger.extractStringField("name", jsonObject);
-                boolean result = mVideoURLs.add(new VideoData(videoName, url));
+                URL url = TmdbDigger.getVideoURL(context, jsonArray, i);
+                String videoName = getVideoName(context, jsonArray, i);
+                URL videoURL;
+                try {
+                    videoURL = new URL(url.toString());
+                } catch (MalformedURLException e) {
+                    continue;
+                }
+                boolean result = mVideoURLs.add(new VideoData(videoName, videoURL));
                 videoList.addView(mVideoListAdapter.getView(i, null, null));
                 Log.d(TAG, "Added video name=" + videoName + " URL=" + i + ": " + url.toString() + " result = " + result);
             }
@@ -412,7 +456,7 @@ public class DetailActivity extends AppCompatActivity {
 
             try {
                 jsonTMDBResponse = TmdbDigger.getResponseFromHttpUrl(reviewListURL);
-                Log.v(TAG, "Fetch reviews, Response=" + jsonTMDBResponse.substring(0, 100));
+                //Log.v(TAG, "Fetch reviews, Response=" + jsonTMDBResponse.substring(0, 100));
 
             } catch (Exception e) {
                 Log.e(TAG, "Problems with response from URL:" + reviewListURL);
@@ -434,7 +478,7 @@ public class DetailActivity extends AppCompatActivity {
 
             //debug info, url not used
             URL url = TmdbUriUtil.buildReviewURL(context, movieId, MainActivity.mApiKey);
-            Log.d(TAG, "ReviewURL: " + url.toString());
+            //Log.d(TAG, "ReviewURL: " + url.toString());
             //end debug info
             LinearLayout reviewList = (LinearLayout) findViewById(R.id.review_list);
 

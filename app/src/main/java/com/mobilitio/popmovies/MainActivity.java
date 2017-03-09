@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 /****************************************************
  * This is the MainActivity of PopMovies
@@ -345,17 +346,22 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
                     jsonResultsArray = TmdbDigger.extractJSONArray(MainActivity.this, jsonTMDBResponse);
                 } catch (MalformedURLException mfue) {
                     Log.w(TAG, "MalformedURLException, url=" + movieRequestURL.toString());
-                    jsonResultsArray = null;
+
+                    return null;
+                } catch (UnknownHostException uhostex) {
+                    Log.w(TAG, "UnknownHostException url=" + movieRequestURL.toString());
+                    return null;
                 } catch (IOException ioex) {
                     Log.w(TAG, "IOException:" + ioex.toString() + " url=" + movieRequestURL.toString());
-                    jsonResultsArray = null;
+                    return tmdbData;
                 } catch (Exception e) {
                     Log.e(TAG, "Exeptional Exception.");
                     e.printStackTrace();
-                    jsonResultsArray = null;
-                } finally {
-                    tmdbRequestPageNr++;
+
+                    return null;
                 }
+
+                tmdbRequestPageNr++;
 
                 int lastResultLength = 0;
                 if (jsonResultsArray != null) {

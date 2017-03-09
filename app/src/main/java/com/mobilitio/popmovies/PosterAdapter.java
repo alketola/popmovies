@@ -135,7 +135,8 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
             if (mMovieData != null) {
                 imagefilename = TmdbDigger.extractPosterName(position, mMovieData);
             } else {
-                Log.d(TAG, "mMovieData = null");
+                //Log.d(TAG, "mMovieData = null");
+                return;
             }
 
             if (imagefilename != null) {
