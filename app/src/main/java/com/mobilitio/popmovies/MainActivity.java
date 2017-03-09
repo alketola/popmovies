@@ -241,9 +241,9 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         return mSearchMode;
     }
 
-    public void loadMovieData(int page) {
+    public void loadMovieData(int numberOfMovies) {
 
-        new FetchMovieDataTask().execute(getSearchModeString(mSearchMode), Integer.toString(page));
+        new FetchMovieDataTask().execute(getSearchModeString(mSearchMode), Integer.toString(numberOfMovies));
     }
 
     private void showMainPosters() {
@@ -260,6 +260,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
     // Side effects:
     // mLoadingIndicator
     // mPosterAdapter.setMovieData(movieData)
+
     public class FetchMovieDataTask extends AsyncTask<String, Void, JSONArray> {
 
         @Override
@@ -277,20 +278,21 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
                 return null;
             }
 
-            String movieSearchMode = params[0];
-            ;//Not pretty but works
+            //PARAM[0] movie search mode e.g. most popular / top rated /favourites
+            //PARAM[1] count of movies to load
+            // - Does not observe TMDB rate limit at the moment, so don't request too many movies
+            //REQUIRES the 2 parameters
+            if (params[0] == null || params[1] == null) return null;
 
-            if (movieSearchMode.equals(null)) return null;
-            String requestedMovieCountString = "0";
-            int requestedMovieCount = 1;
-            if (params[1] != null) {
-                requestedMovieCountString = params[1];
-                try {
-                    requestedMovieCount = Integer.valueOf(requestedMovieCountString);
-                } catch (NumberFormatException e) {
-                    Log.w(TAG, "Something wrong with the task parameter[1]:" + params[1]);
-                    requestedMovieCount = 1;
-                }
+            String movieSearchMode = params[0];
+            String requestedMovieCountString = params[1];
+            int requestedMovieCount;
+
+            try {
+                requestedMovieCount = Integer.valueOf(requestedMovieCountString);
+            } catch (NumberFormatException e) {
+                Log.w(TAG, "Something wrong with the task parameter[1]:" + params[1]);
+                requestedMovieCount = 1; //anti-crash
             }
 
             // FAVOURITES. Instead of any net query, query our own content provider
@@ -303,16 +305,19 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
                 try {
                     favDbCursor = getContentResolver().query(uri, null, null, null, null);
                 } catch (Exception e) {
-
+                    Log.e(TAG, "Could not make query to movie fav DB:" + uri.toString());
+                    return null;
                 }
 
                 if (favDbCursor != null) {
                     tmdbData = readTmdbDataFromFavDB(getApplicationContext(), favDbCursor);
+                } else {
+                    Log.w(TAG, "Movie fav DB cursor from query is null");
+                    return null;
                 }
+
                 // To make things easier in onPostExecute a JSONArray must be returned
                 return tmdbData;
-
-
             }
             int movieCount = 0;
             int tmdbRequestPageNr = 1;
