@@ -51,7 +51,8 @@ public class PopMoviesProvider extends ContentProvider {
                 PopMoviesDbContract.MovieEntry.COLUMN_POSTER_PATH,
                 PopMoviesDbContract.MovieEntry.COLUMN_RELEASE_DATE,
                 PopMoviesDbContract.MovieEntry.COLUMN_VOTE_AVERAGE,
-                PopMoviesDbContract.MovieEntry.COLUMN_OVERVIEW
+                PopMoviesDbContract.MovieEntry.COLUMN_OVERVIEW,
+                PopMoviesDbContract.MovieEntry.COLUMN_TITLE
         };
 
         String selection;

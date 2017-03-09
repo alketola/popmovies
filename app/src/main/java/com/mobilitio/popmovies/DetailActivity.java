@@ -179,7 +179,7 @@ public class DetailActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate(), title_in_action_bar=>" + titleInActionBar);
         // Now, extract elements to UI, storing them to mOdule variables
         // and putting them to UI views
-        mMovieTitle = TmdbDigger.extractStringField(getString(R.string.tmdb_res_original_title), jsonObject);
+        mMovieTitle = TmdbDigger.extractStringField(getString(R.string.tmdb_res_title), jsonObject);
         TextView tv_movie_title = (TextView) findViewById(R.id.tv_movie_title);
 
         if (titleInActionBar) {
@@ -298,7 +298,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private void addMovieToDb(Context context) {
         ContentValues movieDataCV = new ContentValues();
-        movieDataCV.put(PopMoviesDbContract.MovieEntry.COLUMN_ORIGINAL_TITLE, mMovieTitle);
+        movieDataCV.put(PopMoviesDbContract.MovieEntry.COLUMN_TITLE, mMovieTitle);
         // PLAIN path not the complete URI mImageURIString, but it must be preceded by a slash
         movieDataCV.put(PopMoviesDbContract.MovieEntry.COLUMN_POSTER_PATH, "/" + mShortImageUriString);
         movieDataCV.put(PopMoviesDbContract.MovieEntry.COLUMN_OVERVIEW, mSynopsisText);

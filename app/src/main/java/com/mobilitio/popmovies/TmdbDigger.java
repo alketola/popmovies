@@ -223,10 +223,10 @@ public class TmdbDigger {
         return oneMovieData;
     }
 
-
+    // The hack to make the overlay text easily
     public static String extractShortMovieInfo(int position, JSONArray array) {
         JSONObject movieData = extractOneMovieData(position, array);
-        String original_title = extractStringField("original_title", movieData);
+        String original_title = extractStringField("title", movieData);
         float vote_average = extractDecimalField("vote_average", movieData);
         //original_title = original_title.substring(0,10);
         return " " + original_title + "  " + String.valueOf(vote_average);
@@ -417,7 +417,7 @@ public class TmdbDigger {
                 cursor, json);
 
         TmdbDigger.stringAtCursorToJSON(context,
-                R.string.tmdb_res_original_title,
+                R.string.tmdb_res_title,
                 cursor, json);
         return json;
 
