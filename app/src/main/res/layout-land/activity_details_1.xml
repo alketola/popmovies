@@ -1,215 +1,220 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/iv_detail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:minHeight="@dimen/tmdb_img_size_smallest_dp_dimen"
-            android:minWidth="@dimen/tmdb_img_size_smallest_dp_dimen"
-            app:srcCompat="@drawable/squarepivot185" />
-
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tv_release_date_title"
-                android:layout_width="@dimen/tv_detail_title_width"
-                android:layout_height="@dimen/tv_detail_height"
-                android:layout_marginEnd="@dimen/margin_a"
-                android:layout_marginLeft="@dimen/margin_a"
-                android:layout_marginRight="@dimen/margin_a"
-                android:layout_marginStart="@dimen/margin_a"
-                android:layout_marginTop="@dimen/margin_minimal"
-                android:gravity="start"
-                android:text="@string/release_date_title"
-                android:textAlignment="gravity"
-                android:textSize="@dimen/detail_h2_size"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tv_release_date"
-                android:layout_width="@dimen/tv_detail_value_width"
-                android:layout_height="@dimen/tv_detail_height"
-                android:layout_marginEnd="@dimen/margin_a"
-                android:layout_marginLeft="@dimen/margin_a"
-                android:layout_marginRight="@dimen/margin_a"
-                android:layout_marginStart="@dimen/margin_a"
-                android:layout_marginTop="@dimen/margin_minimal"
-                android:gravity="start"
-                android:text="@string/not_available"
-                android:textAlignment="gravity"
-                android:textSize="@dimen/detail_h2_size"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tv_rating_title"
-                android:layout_width="@dimen/tv_detail_title_width"
-                android:layout_height="@dimen/tv_detail_height"
-                android:layout_marginEnd="@dimen/margin_a"
-                android:layout_marginLeft="@dimen/margin_a"
-                android:layout_marginRight="@dimen/margin_a"
-                android:layout_marginStart="@dimen/margin_a"
-                android:layout_marginTop="@dimen/margin_minimal"
-                android:gravity="start"
-                android:text="@string/rating_title_default"
-                android:textAlignment="gravity"
-                android:textSize="@dimen/detail_h2_size"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tv_rating_decimal_number"
-                android:layout_width="@dimen/tv_detail_value_width"
-                android:layout_height="@dimen/tv_detail_height"
-                android:layout_marginEnd="@dimen/margin_a"
-                android:layout_marginLeft="@dimen/margin_a"
-                android:layout_marginRight="@dimen/margin_a"
-                android:layout_marginStart="@dimen/margin_a"
-                android:layout_marginTop="@dimen/margin_minimal"
-                android:gravity="start"
-                android:text="@string/not_rated"
-                android:textAlignment="gravity"
-                android:textSize="@dimen/detail_h2_size"
-                android:textStyle="normal" />
-        </LinearLayout>
-
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <android.support.v7.widget.AppCompatCheckBox
-                android:id="@+id/tv_favourite_title"
-                android:layout_width="@dimen/scoreboard_width"
-                android:layout_height="@dimen/tv_detail_height"
-                android:layout_marginEnd="@dimen/margin_a"
-                android:layout_marginLeft="@dimen/margin_a"
-                android:layout_marginRight="@dimen/margin_a"
-                android:layout_marginStart="@dimen/margin_a"
-                android:layout_marginTop="@dimen/margin_minimal"
-                android:gravity="center_horizontal"
-                android:text="@string/favourite_title"
-                android:textAlignment="gravity"
-                android:textColor="@color/colorFavouriteOff"
-                android:textSize="@dimen/detail_h2_size"
-                android:textStyle="bold" />
-        </LinearLayout>
-    </LinearLayout>
+    android:layout_height="match_parent">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <!-- I would prefer to have the MOVIE TITLE in App Title, but the rubric says "in layout" -->
-        <TextView
-            android:id="@+id/tv_movie_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/margin_a"
-            android:layout_marginLeft="@dimen/margin_a"
-            android:layout_marginRight="@dimen/margin_a"
-            android:layout_marginStart="@dimen/margin_a"
-            android:layout_marginTop="@dimen/margin_a"
-            android:text="MOVIE TITLE"
-            android:textAlignment="center"
-            android:textSize="@dimen/main_h1_size"
-            android:textStyle="bold" />
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fillViewport="true">
+            <ImageView
+                android:id="@+id/iv_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:minWidth="@dimen/tmdb_img_size_smallest_dp_dimen"
+                android:minHeight="@dimen/tmdb_img_size_smallest_dp_dimen"
+                app:srcCompat="@drawable/squarepivot185" />
 
-            <LinearLayout
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/synopsisTitle"
-                    android:layout_width="155dp"
-                    android:layout_height="33dp"
-                    android:layout_marginEnd="@dimen/margin_a"
-                    android:layout_marginLeft="@dimen/margin_a"
-                    android:layout_marginRight="@dimen/margin_a"
+                    android:id="@+id/tv_release_date_title"
+                    android:layout_width="@dimen/tv_detail_title_width"
+                    android:layout_height="@dimen/tv_detail_height"
                     android:layout_marginStart="@dimen/margin_a"
-                    android:layout_marginTop="@dimen/margin_a"
-                    android:text="@string/synopsis_title_default"
+                    android:layout_marginLeft="@dimen/margin_a"
+                    android:layout_marginTop="@dimen/margin_minimal"
+                    android:layout_marginEnd="@dimen/margin_a"
+                    android:layout_marginRight="@dimen/margin_a"
+                    android:gravity="start"
+                    android:text="@string/release_date_title"
+                    android:textAlignment="gravity"
                     android:textSize="@dimen/detail_h2_size"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/tv_synopsis"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/margin_a"
-                    android:layout_marginLeft="@dimen/margin_a"
-                    android:layout_marginRight="@dimen/margin_a"
+                    android:id="@+id/tv_release_date"
+                    android:layout_width="@dimen/tv_detail_value_width"
+                    android:layout_height="@dimen/tv_detail_height"
                     android:layout_marginStart="@dimen/margin_a"
-                    android:layout_marginTop="@dimen/margin_a"
-                    android:minWidth="72dp"
-                    android:text="@string/overview_text_default"
-                    android:textSize="@dimen/detail_overview_text_size" />
-
-                <TextView
-                    android:id="@+id/video_list_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/margin_a"
                     android:layout_marginLeft="@dimen/margin_a"
+                    android:layout_marginTop="@dimen/margin_minimal"
+                    android:layout_marginEnd="@dimen/margin_a"
                     android:layout_marginRight="@dimen/margin_a"
-                    android:layout_marginStart="@dimen/margin_a"
-                    android:layout_marginTop="@dimen/margin_a"
-                    android:text="Trailers"
+                    android:gravity="start"
+                    android:text="@string/not_available"
+                    android:textAlignment="gravity"
                     android:textSize="@dimen/detail_h2_size"
                     android:textStyle="bold" />
-
-                <LinearLayout
-                    android:id="@+id/video_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" />
-
-                <TextView
-                    android:id="@+id/review_list_titleitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/margin_a"
-                    android:layout_marginLeft="@dimen/margin_a"
-                    android:layout_marginRight="@dimen/margin_a"
-                    android:layout_marginStart="@dimen/margin_a"
-                    android:layout_marginTop="@dimen/margin_a"
-                    android:text="Reviews"
-                    android:textSize="@dimen/detail_h2_size"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:id="@+id/review_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" />
             </LinearLayout>
-        </ScrollView>
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_rating_title"
+                    android:layout_width="@dimen/tv_detail_title_width"
+                    android:layout_height="@dimen/tv_detail_height"
+                    android:layout_marginStart="@dimen/margin_a"
+                    android:layout_marginLeft="@dimen/margin_a"
+                    android:layout_marginTop="@dimen/margin_minimal"
+                    android:layout_marginEnd="@dimen/margin_a"
+                    android:layout_marginRight="@dimen/margin_a"
+                    android:gravity="start"
+                    android:text="@string/rating_title_default"
+                    android:textAlignment="gravity"
+                    android:textSize="@dimen/detail_h2_size"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_rating_decimal_number"
+                    android:layout_width="@dimen/tv_detail_value_width"
+                    android:layout_height="@dimen/tv_detail_height"
+                    android:layout_marginStart="@dimen/margin_a"
+                    android:layout_marginLeft="@dimen/margin_a"
+                    android:layout_marginTop="@dimen/margin_minimal"
+                    android:layout_marginEnd="@dimen/margin_a"
+                    android:layout_marginRight="@dimen/margin_a"
+                    android:gravity="start"
+                    android:text="@string/not_rated"
+                    android:textAlignment="gravity"
+                    android:textSize="@dimen/detail_h2_size"
+                    android:textStyle="normal" />
+            </LinearLayout>
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/tv_favourite_title"
+                    android:layout_width="@dimen/scoreboard_width"
+                    android:layout_height="@dimen/tv_detail_height"
+                    android:layout_marginStart="@dimen/margin_a"
+                    android:layout_marginLeft="@dimen/margin_a"
+                    android:layout_marginTop="@dimen/margin_minimal"
+                    android:layout_marginEnd="@dimen/margin_a"
+                    android:layout_marginRight="@dimen/margin_a"
+                    android:gravity="center_horizontal"
+                    android:text="@string/favourite_title"
+                    android:textAlignment="gravity"
+                    android:textColor="@color/colorFavouriteOff"
+                    android:textSize="@dimen/detail_h2_size"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <!-- I would prefer to have the MOVIE TITLE in App Title, but the rubric says "in layout" -->
+            <TextView
+                android:id="@+id/tv_movie_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_a"
+                android:layout_marginLeft="@dimen/margin_a"
+                android:layout_marginTop="@dimen/margin_a"
+                android:layout_marginEnd="@dimen/margin_a"
+                android:layout_marginRight="@dimen/margin_a"
+                android:text="MOVIE TITLE"
+                android:textAlignment="center"
+                android:textSize="@dimen/main_h1_size"
+                android:textStyle="bold" />
+
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fillViewport="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/synopsisTitle"
+                        android:layout_width="155dp"
+                        android:layout_height="33dp"
+                        android:layout_marginStart="@dimen/margin_a"
+                        android:layout_marginLeft="@dimen/margin_a"
+                        android:layout_marginTop="@dimen/margin_a"
+                        android:layout_marginEnd="@dimen/margin_a"
+                        android:layout_marginRight="@dimen/margin_a"
+                        android:text="@string/synopsis_title_default"
+                        android:textSize="@dimen/detail_h2_size"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_synopsis"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_a"
+                        android:layout_marginLeft="@dimen/margin_a"
+                        android:layout_marginTop="@dimen/margin_a"
+                        android:layout_marginEnd="@dimen/margin_a"
+                        android:layout_marginRight="@dimen/margin_a"
+                        android:minWidth="72dp"
+                        android:text="@string/overview_text_default"
+                        android:textSize="@dimen/detail_overview_text_size" />
+
+                    <TextView
+                        android:id="@+id/video_list_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_a"
+                        android:layout_marginLeft="@dimen/margin_a"
+                        android:layout_marginTop="@dimen/margin_a"
+                        android:layout_marginEnd="@dimen/margin_a"
+                        android:layout_marginRight="@dimen/margin_a"
+                        android:text="Trailers"
+                        android:textSize="@dimen/detail_h2_size"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:id="@+id/video_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                    <TextView
+                        android:id="@+id/review_list_titleitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_a"
+                        android:layout_marginLeft="@dimen/margin_a"
+                        android:layout_marginTop="@dimen/margin_a"
+                        android:layout_marginEnd="@dimen/margin_a"
+                        android:layout_marginRight="@dimen/margin_a"
+                        android:text="Reviews"
+                        android:textSize="@dimen/detail_h2_size"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:id="@+id/review_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </LinearLayout>
+            </ScrollView>
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</ScrollView>

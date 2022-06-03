@@ -1,9 +1,9 @@
 package com.mobilitio.popmovies;
 
+import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
+
 import android.content.Context;
 import android.net.Uri;
-import android.support.v4.util.SimpleArrayMap;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -17,10 +17,13 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import static android.support.v7.widget.RecyclerView.NO_POSITION;
+//import static android.support.v7.widget.RecyclerView.NO_POSITION;
 import static com.mobilitio.popmovies.TmdbDigger.extractOneMovieData;
 import static com.mobilitio.popmovies.TmdbUriUtil.buildImageUri;
 import static com.mobilitio.popmovies.TmdbUriUtil.getImageSizePathString;
+
+import androidx.collection.SimpleArrayMap;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by antti on 24/01/17.
@@ -116,7 +119,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
         public void onClick(View v) {
             Log.v(TAG, "onClick");
             Context context = v.getContext();
-            int adapterPosition = getAdapterPosition();
+            int adapterPosition = getBindingAdapterPosition();
             if (adapterPosition == (NO_POSITION)) {
                 Log.d(TAG, "ViewHolder at NO_POSITION; not ready yet");
                 return;
@@ -145,7 +148,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
 
             if (imagefilename != null) {
                 Uri uri = buildImageUri(context, imagefilename, getImageSizePathString(mPosterWidthPx));
-                Picasso.with(pvContext)
+                Picasso.get()
                         .load(uri.toString())
                         .placeholder(R.drawable.squarepivot92)
                         .error(R.drawable.squarepivot92red)

@@ -9,15 +9,6 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceManager;
-import android.support.v7.widget.AppCompatCheckBox;
-import android.support.v7.widget.ShareActionProvider;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -46,6 +37,16 @@ import java.util.List;
 import static com.mobilitio.popmovies.TmdbDigger.extractDecimalField;
 import static com.mobilitio.popmovies.TmdbDigger.extractStringField;
 import static com.mobilitio.popmovies.TmdbDigger.getVideoName;
+
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.ShareActionProvider;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.MenuItemCompat;
+import androidx.preference.PreferenceManager;
 
 /**
  * Created by antti on 26/01/17.
@@ -201,7 +202,7 @@ public class DetailActivity extends AppCompatActivity {
 
         String sizePath = TmdbUriUtil.getImageSizePathString(imageSize);
         mImageURIString = TmdbUriUtil.buildImageUri(this, mShortImageUriString, sizePath).toString();
-        Picasso.with(context)
+        Picasso.get()
                 .load(mImageURIString)
                 .placeholder(R.drawable.squarepivot92)
                 .resize(imageSize, imageSize) // square
@@ -496,6 +497,7 @@ public class DetailActivity extends AppCompatActivity {
                 reviewAuthorView.setText(reviewAuthor + ": ");
                 reviewAuthorView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelSize(R.dimen.detail_h3_size));
                 reviewAuthorView.setTypeface(null, Typeface.BOLD_ITALIC);
+                reviewAuthorView.setTextColor(getResources().getColor(R.color.colorReviewText));
                 int padding = getResources().getDimensionPixelSize(R.dimen.margin_a);
                 reviewAuthorView.setPadding(padding, padding, padding, padding);
                 reviewAuthorView.setLayoutParams(new LinearLayout.LayoutParams(
@@ -503,6 +505,9 @@ public class DetailActivity extends AppCompatActivity {
                 reviewList.addView(reviewAuthorView);
 
                 TextView reviewContentView = new TextView(getBaseContext());
+                reviewContentView.setTextColor(getResources().getColor(R.color.colorReviewText));
+                reviewContentView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelSize(R.dimen.default_text_sixe));
+                reviewContentView.setTypeface(null, Typeface.NORMAL);
                 reviewContentView.setText(reviewContent);
                 padding = getResources().getDimensionPixelSize(R.dimen.margin_a);
                 reviewContentView.setPadding(padding, padding, padding, padding);

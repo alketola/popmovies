@@ -2,7 +2,7 @@ package com.mobilitio.popmovies;
 
 import android.content.Context;
 import android.net.Uri;
-import android.support.test.InstrumentationRegistry;
+import androidx.test.InstrumentationRegistry;
 
 import org.junit.After;
 import org.junit.Before;
@@ -33,7 +33,7 @@ public class TmdbUriUtilAndroidTest {
         String sizeString = "w185";
         String expectedResult = "http://image.tmdb.org/image/t/p/" + sizeString + "/" + testFileName;
         Uri uri = TmdbUriUtil.buildImageUri(context, testFileName, sizeString);
-        assertEquals(expectedResult, uri.toString())
+        assertEquals(expectedResult, uri.toString());
 
     }
 

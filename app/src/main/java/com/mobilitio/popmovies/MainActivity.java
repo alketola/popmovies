@@ -8,10 +8,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceManager;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -20,6 +16,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.Adapter;
 
 import com.mobilitio.popmovies.data.PopMoviesDbContract;
 
@@ -117,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         int posterWidth;
 
         mPosterAdapter = new PosterAdapter(ADAPTER_IMAGE_COUNT, mScreenWidth / spanCount, this);
-        mMoviePosterGrid.setAdapter(mPosterAdapter);
+        mMoviePosterGrid.setAdapter((Adapter) mPosterAdapter);
         readPreferences();
 
         /* load movie data from tmdb */

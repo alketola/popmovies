@@ -6,4 +6,5 @@
     <color name="colorFavouriteOn">#00FF00</color>
     <color name="colorFavouriteOff">#cccccc</color>
     <color name="colorFavouriteBackground">#888888</color>
+    <color name="colorReviewText">#EEEEEE</color>
 </resources>

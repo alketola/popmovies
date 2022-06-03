@@ -6,6 +6,7 @@
     <dimen name="detail_h2_size">20sp</dimen>
     <dimen name="detail_h3_size">18sp</dimen>
     <dimen name="detail_overview_text_size">18sp</dimen>
+    <dimen name="default_text_sixe">16sp</dimen>
     <dimen name="main_h1_size">22sp</dimen>
     <dimen name="margin_a">8dp</dimen>
     <dimen name="margin_minimal">3dp</dimen>
@@ -16,4 +17,5 @@
     <dimen name="tv_detail_value_width">120dp</dimen>
     <dimen name="tv_detail_title_width">70dp</dimen>
     <dimen name="tv_detail_height">29dp</dimen>
+    <dimen name="scoreboard_width">190dp</dimen>
 </resources>

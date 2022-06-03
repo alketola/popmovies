@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/popmovies.iml" filepath="$PROJECT_DIR$/.idea/modules/popmovies.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/popmovies.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/popmovies.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/popmovies.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/popmovies.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/popmovies.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/popmovies.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/popmovies.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/popmovies.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/picasso-2.5.2/popmovies.picasso-2.5.2.iml" filepath="$PROJECT_DIR$/.idea/modules/picasso-2.5.2/popmovies.picasso-2.5.2.iml" />
+    </modules>
+  </component>
+</project>

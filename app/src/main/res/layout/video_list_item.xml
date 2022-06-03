@@ -8,8 +8,8 @@
     android:layout_marginRight="@dimen/margin_a"
     android:layout_marginStart="@dimen/margin_a"
     android:layout_marginTop="@dimen/margin_a"
-    android:drawableLeft="@drawable/ic_videobutton"
+    android:drawableStart="@drawable/ic_videobutton"
     android:minWidth="72dp"
-    android:text="This is a video, click button."
+    android:text="@string/video_click_button"
     android:textSize="@dimen/detail_overview_text_size" />
 

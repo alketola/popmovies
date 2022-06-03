@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="@dimen/iv_poster_margin"
-        android:contentDescription="Poster"
+        android:contentDescription="@string/poster"
         android:visibility="visible"
         />
 
@@ -23,5 +23,5 @@
         android:background="#67050505"
         android:textSize="@dimen/main_h1_size"
         android:padding="@dimen/margin_a"
-        android:layout_gravity="top|left" />
+        android:layout_gravity="top|start" />
 </FrameLayout>
