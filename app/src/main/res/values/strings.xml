@@ -48,4 +48,6 @@
     <string name="movie_title">MOVIE TITLE</string>
     <string name="poster">Poster</string>
     <string name="video_click_button">This is a video, click button.</string>
+    <string name="image_attribution_to_tmdb">Images and all movie data supplied by The Movie Database</string>
+    <string name="tmdb_url_text_and_abbrev">https://themoviedatabase.org (TMDB)</string>
 </resources>

@@ -24,5 +24,9 @@
         android:summaryOff="@string/pref_poster_overlay_summary_off"
         android:summaryOn="@string/pref_poster_overlay_summary_on"
         />
+    <Preference
+        android:title="@string/image_attribution_to_tmdb"
+        android:summary="@string/tmdb_url_text_and_abbrev"
+        android:icon="@drawable/ic_tmdb_blue_square_2"/>
 
 </PreferenceScreen>

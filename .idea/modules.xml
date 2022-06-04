@@ -7,7 +7,6 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/popmovies.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/popmovies.app.androidTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/popmovies.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/popmovies.app.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/popmovies.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/popmovies.app.unitTest.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/picasso-2.5.2/popmovies.picasso-2.5.2.iml" filepath="$PROJECT_DIR$/.idea/modules/picasso-2.5.2/popmovies.picasso-2.5.2.iml" />
     </modules>
   </component>
 </project>
